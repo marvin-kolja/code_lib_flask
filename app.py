@@ -99,7 +99,8 @@ def scan():
         else:
             #Has to changed
             clean_GPIO()
-            return redirect(url_for('firstuse'))
+            break
+    return redirect(url_for('firstuse'))
     
 
 
