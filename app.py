@@ -90,9 +90,7 @@ def scan():
         id = int(reader.read_id())
     except:
         return "404: Something went wrong..."
-        return redirect(url_for('firstuse'))
     else:
-        return str(id)
         #Has to changed
         return redirect(url_for('firstuse'))
     
