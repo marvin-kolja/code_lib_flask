@@ -59,13 +59,7 @@ def firstuse():
 
 @app.route('/first/scancard')
 def scancardFirst():
-    try:
-        id = str(reader.read_id())
-    except:
-        # print ("Something went wrong with with the reader...")
-        raise
-    else:
-        return id
+    return redirect(url_for('scan'))
 
 @app.route('/first/form')
 def cardrecognized():
@@ -89,6 +83,19 @@ def emailconfirm():
 def doneFirst():
     # Needs name of user
     pass
+
+@app.route('/scan')
+def scan():
+    try:
+        id = int(reader.read_id())
+    except:
+        return "404: Something went wrong..."
+        return redirect(url_for('firstuse'))
+    else:
+        return str(id)
+        #Has to changed
+        return redirect(url_for('firstuse'))
+    
 
 
 
