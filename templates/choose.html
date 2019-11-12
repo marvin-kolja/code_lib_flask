@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/choose.css') }}">
+{% endblock %}
+
+{% block head %}
+<title>Choose</title>
+{% endblock %}
+
+{% block body %}
+<div>
+    <h1 style="font-size: 64px; text-align: center;">Welcome.</h1>
+    <form action = "/chooselogin" method = "post">
+        <p><input type = "submit" name = "button" value = "Log in"/></p>
+        <p><input type = "submit" name = "button" value = "First use"/></p>
+    </form>
+</div>
+{% endblock %}

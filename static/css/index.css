@@ -1,0 +1,22 @@
+.logo {
+    font-size: 100px;
+    width: 80%;
+    height: 20%;
+    margin: 10% 10%;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.touch {
+    font-size: 30px;
+    width: 60%;
+    height: 20%;
+    margin: 5% 20%;
+    
+    text-align: center;
+}
+
+.date {
+    position: absolute;
+    top: 0;
+}

@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
 {% block head %}
 <title>FlaskApp</title>
 {% endblock %}
 
 {% block body %}
-<h1>Template</h1>
+<h1 class="logo">CODE library</h1>
+<h2 class="touch">Touch screen to start</h2>
+<p class="date">{{ date }}</p>
 {% endblock %}

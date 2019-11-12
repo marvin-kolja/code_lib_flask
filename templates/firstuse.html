@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/choose.css') }}">
+{% endblock %}
+
+{% block head %}
+<title>First use</title>
+{% endblock %}
+
+{% block body %}
+
+<h2>First use</h2>
+<p>To use the scanner system, you need to <strong>initialize</strong> a RFID/NFC card.</p>
+<p></p>
+<p>The <strong>Factory card</strong> is my recommendation!</p>
+
+
+<form action = "/first/intro" method = "post">
+    <p><input type = "submit" name = "back" value = "Back"/></p>
+    <p><input type = "submit" name = "next" value = "Next"/></p>
+</form>
+{% endblock %}
