@@ -59,15 +59,13 @@ def firstuse():
 
 @app.route('/first/scancard')
 def scancardFirst():
-        while True:
-            try:
-                id = int(reader.read_id())
-                return id
-            except:
-                # print ("Something went wrong with with the reader...")
-                raise
-            else:
-                break
+    try:
+        id = str(reader.read_id())
+    except:
+        # print ("Something went wrong with with the reader...")
+        raise
+    else:
+        return id
 
 @app.route('/first/form')
 def cardrecognized():
