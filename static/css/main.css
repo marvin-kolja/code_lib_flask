@@ -1,4 +1,13 @@
+:root {
+    --main-bg-color: #131313;
+    --main-font-color : #ffffff;
+}
+
 body {
     margin: 0;
     font-family: sans-serif;
+    color: var(--main-font-color);
+    background-color: var(--main-bg-color);
+    height: 100%;
+    width: 100%;
 }
