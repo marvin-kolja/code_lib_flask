@@ -86,13 +86,14 @@ def doneFirst():
 
 @app.route('/scan')
 def scan():
-    try:
-        id = int(reader.read_id())
-    except:
-        return "404: Something went wrong..."
-    else:
-        #Has to changed
-        return redirect(url_for('firstuse'))
+    while True:
+        try:
+            id = int(reader.read_id())
+        except:
+            return "404: Something went wrong..."
+        else:
+            #Has to changed
+            return redirect(url_for('firstuse'))
     
 
 
