@@ -11,6 +11,11 @@ from mfrc522 import SimpleMFRC522
 app = Flask(__name__)
 reader = SimpleMFRC522()
 
+def clean_GPIO():
+    print("\n\nProgramm has been terminated...")
+    GPIO.cleanup()
+    print("GPIO has been cleaned up...")
+
 @app.route('/')
 def index():
 
@@ -93,6 +98,7 @@ def scan():
             return "404: Something went wrong..."
         else:
             #Has to changed
+            clean_GPIO()
             return redirect(url_for('firstuse'))
     
 
