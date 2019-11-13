@@ -4,6 +4,7 @@ import sqlite3
 from time import sleep
 import sys
 import random
+import requests
 # import RPi.GPIO as GPIO
 # from mfrc522 import SimpleMFRC522
 
@@ -55,22 +56,32 @@ def chooselogin():
     else:
         return render_template('choose.html')
 
-@app.route('/first/intro', methods = ['POST', 'GET'])
+@app.route('/first', methods = ['POST', 'GET'])
 def firstuse():
     if request.method == 'POST':
         if 'back' in request.form:
             return redirect(url_for('chooselogin'))
         elif 'next' in request.form:
-            return redirect(url_for('scancardFirst'))
+            """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
+            # url = "http://localhost:5000/first/scancard"
+            # obj = {'id': 'id'}
+            # id = requests.post(url, obj)
+            # return "Hold your Card at the scanner"
         else:
             return render_template('firstuse.html')
     else:
         return render_template('firstuse.html')
 
 
-@app.route('/first/scancard')
+
+@app.route('/first/scancard', methods = ['POST', 'GET'])
 def scancardFirst():
-    sleep(5)
+    if request.method == 'POST':
+        if request.form['id']:
+            return "3456765437876"
+        else:
+            return " didn't worked"
+        
 
 
 @app.route('/first/form')
@@ -99,13 +110,12 @@ def doneFirst():
 @app.route('/scan')
 def scan():
     try:
-        # id = int(reader.read_id())
-        yikes = 0
+        id = int(reader.read_id())
     except:
         pass
     else:
         #Has to changed
-        # clean_GPIO()
+        clean_GPIO()
         return redirect(url_for('checkData'))
 
 
