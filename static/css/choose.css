@@ -1,0 +1,9 @@
+div {
+    position: absolute;
+    border-radius: 5px;
+    width: 40%;
+    height: 50%;
+    top: 20%;
+    left: 50%;
+    margin-left: -20%;
+  }
