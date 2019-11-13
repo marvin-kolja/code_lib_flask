@@ -4,19 +4,19 @@ import sqlite3
 from time import sleep
 import sys
 import random
-import RPi.GPIO as GPIO
-from mfrc522 import SimpleMFRC522
+# import RPi.GPIO as GPIO
+# from mfrc522 import SimpleMFRC522
 
 
 app = Flask(__name__)
-reader = SimpleMFRC522()
+# reader = SimpleMFRC522()
 
-def clean_GPIO():
-    print("\n\nProgramm has been terminated...")
-    GPIO.cleanup()
-    print("GPIO has been cleaned up...")
+# def clean_GPIO():
+#     print("\n\nProgramm has been terminated...")
+#     GPIO.cleanup()
+#     print("GPIO has been cleaned up...")
 
-@app.route('/')
+@app.route('/', methods = ['POST', 'GET'])
 def index():
 
     # database_contents = ''
@@ -34,7 +34,13 @@ def index():
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
 
-    return render_template('index.html', date = x)
+    if request.method == 'POST':
+        if request.form['start'] == '':
+            return redirect(url_for('chooselogin'))
+        else:
+            return render_template('index.html', date = x)
+    else:
+        return render_template('index.html', date = x)
 
 @app.route('/chooselogin', methods = ['POST', 'GET'])
 def chooselogin():
@@ -64,7 +70,8 @@ def firstuse():
 
 @app.route('/first/scancard')
 def scancardFirst():
-    return redirect(url_for('scan'))
+    sleep(5)
+
 
 @app.route('/first/form')
 def cardrecognized():
@@ -88,20 +95,18 @@ def emailconfirm():
 def doneFirst():
     # Needs name of user
     pass
-
+    
 @app.route('/scan')
 def scan():
-    while True:
-        try:
-            id = int(reader.read_id())
-        except:
-            return "404: Something went wrong..."
-        else:
-            #Has to changed
-            clean_GPIO()
-            break
-    return redirect(url_for('firstuse'))
-    
+    try:
+        # id = int(reader.read_id())
+        yikes = 0
+    except:
+        pass
+    else:
+        #Has to changed
+        # clean_GPIO()
+        return redirect(url_for('checkData'))
 
 
 

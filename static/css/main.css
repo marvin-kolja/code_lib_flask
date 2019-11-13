@@ -25,8 +25,8 @@ p {
 input[type=submit] {
     width: 100%;
     font-size: 32px;
-    background-color: white;
-    color: #131313;
+    background-color: var(--main-font-color);
+    color: var(--main-bg-color);
     padding: 5px 5px;
     margin: 8px 0;
     border: none;
