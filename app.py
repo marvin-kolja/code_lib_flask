@@ -7,20 +7,20 @@ import random
 import requests
 import json
 from sqlite.operation_functions import Operations
-# import RPi.GPIO as GPIO
-# from mfrc522 import SimpleMFRC522
+import RPi.GPIO as GPIO
+from mfrc522 import SimpleMFRC522
 
 
 app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-# reader = SimpleMFRC522()
+reader = SimpleMFRC522()
 
-# def clean_GPIO():
-#     print("\n\nProgramm has been terminated...")
-#     GPIO.cleanup()
-#     print("GPIO has been cleaned up...")
+def clean_GPIO():
+    print("\n\nProgramm has been terminated...")
+    GPIO.cleanup()
+    print("GPIO has been cleaned up...")
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -99,14 +99,14 @@ def scan():
     if request.method == 'GET':
         if request.form:
             try:
-                # id = str(reader.read_id())
-                id = "215531341298"
+                id = str(reader.read_id())
+                # id = "215531341298"
             except:
                 return json.dumps({"code":"0x0"})
             else:
                 #Has to changed
                 print("Scan succesfull")
-                # clean_GPIO()
+                clean_GPIO()
                 session['id_f'] = id
                 return redirect(url_for('checkData'))
         else:
