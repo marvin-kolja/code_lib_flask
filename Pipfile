@@ -7,9 +7,10 @@ verify_ssl = true
 
 [packages]
 flask = "==1.1.1"
-rpi-gpio = "==0.7.0"
 requests = "*"
 flask-session = "*"
+rpi-gpio = "*"
+mfrc522 = "*"
 
 [requires]
 python_version = "3.7"
