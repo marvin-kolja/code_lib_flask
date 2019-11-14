@@ -97,7 +97,7 @@ def doneFirst():
 @app.route('/scan', methods = ['GET'])
 def scan():
     if request.method == 'GET':
-        if '110' in request.form:
+        if request.form:
             try:
                 # id = str(reader.read_id())
                 id = "215531341298"
