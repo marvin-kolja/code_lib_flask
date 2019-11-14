@@ -98,17 +98,18 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         if request.form:
-            try:
-                id = str(reader.read_id())
-                # id = "215531341298"
-            except:
-                return json.dumps({"code":"0x0"})
-            else:
-                #Has to changed
-                print("Scan succesfull")
-                clean_GPIO()
-                session['id_f'] = id
-                return redirect(url_for('checkData'))
+            while True:
+                try:
+                    id = str(reader.read_id())
+                    # id = "215531341298"
+                except:
+                    return json.dumps({"code":"0x0"})
+                else:
+                    #Has to changed
+                    print("Scan succesfull")
+                    clean_GPIO()
+                    session['id_f'] = id
+                    return redirect(url_for('checkData'))
         else:
             return "This is for the server not the user!"
     else:
