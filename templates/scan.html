@@ -22,19 +22,41 @@
 <form action = "/first" method = "post">
     <p><input type = "submit" name = "back2" value = "Back"/></p>
 </form>
-
 <script>
 function loadDoc() {
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        if (this.responseText == '1') {
-            window.location = "/first/form";
-        }
-    }
-    };
     xhttp.open("GET", "/scan", true);
-    xhttp.send();
+    xhttp.responseType = 'json';
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var responseObj = xhttp.response;
+
+            if (responseObj.code == '0x0') {
+                // alert scanner error
+                alert("Something went wrong with the scanner!")
+                // Should report it to library team
+                loadDoc()
+            }
+            if (responseObj.code == '1x0') {
+                // alert User is already connected with this ID
+                alert("The scanned ID is already connected to a user!")
+                loadDoc()
+            }
+            if (responseObj.code == '1x1') {
+                // alert Book is already connected with this ID
+                alert("The scanned ID is already connected to a user!")
+                loadDoc()
+            }
+            if (responseObj.code == '1x2') {
+                window.location = "/first/form";
+            }
+        }
+    };
+    // xhttp.onload = function() {
+
+    // };
+    xhttp.send('110');
+    
 }
 loadDoc()
 </script>

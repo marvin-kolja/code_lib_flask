@@ -5,6 +5,8 @@ from time import sleep
 import sys
 import random
 import requests
+import json
+from sqlite.operation_functions import Operations
 # import RPi.GPIO as GPIO
 # from mfrc522 import SimpleMFRC522
 
@@ -22,19 +24,6 @@ app.secret_key = '56732356754345678'
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-
-    # database_contents = ''
-
-    # conn = sqlite3.connect('sqlite/library.db')
-    # try:
-    #     c = conn.cursor()
-    #     rows = c.execute('SELECT * FROM book_book')
-    #     for row in rows:
-    #         database_contents += f"{row}\n\n"
-    #     msg = 'Database Content test:' + database_contents
-    # finally:
-    #     return render_template('index.html', msg = msg)
-    #     conn.close()
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
 
@@ -108,26 +97,63 @@ def doneFirst():
 @app.route('/scan', methods = ['GET'])
 def scan():
     if request.method == 'GET':
-        try:
-            # id = str(reader.read_id())
-            id = "3464356456784"
-        except:
-            pass
+        if '110' in request.form:
+            try:
+                # id = str(reader.read_id())
+                id = "215531341298"
+            except:
+                return json.dumps({"code":"0x0"})
+            else:
+                #Has to changed
+                print("Scan succesfull")
+                # clean_GPIO()
+                session['id_f'] = id
+                return redirect(url_for('checkData'))
         else:
-            #Has to changed
-            # clean_GPIO()
-            session['id_f'] = id
-            return redirect(url_for('checkData'))
+            return "This is for the server not the user!"
     else:
-        return ('something went wrong')
+        return 'something went wrong'
 
 @app.route('/checkData')
 def checkData():
     if 'id_f' in session:
-        id = session['id_f']
-        # Check id
-        print('yep')
-        return '1'
+        id = int(session['id_f'])
+        try:
+            op = Operations()
+            print('Database connected')
+
+            userId = op.check_user_exist_id(id)
+            bookId = op.check_book_exist_id(id)
+            if userId:
+                print("ID is already connected with a user")
+                print(userId)
+                code = {'code':'1x0', "userId":userId}
+            elif bookId:
+                print("ID is already connected with a book")
+                print(userId)
+                code = {'code':'1x1', "bookId":bookId}
+            else:
+                print("ID is not connected, ready too use")
+                code = {'code':'1x2'}
+        finally:
+            print("Checking done")
+            op.conn.close()
+            print("Database closed")
+            jsoncode = json.dumps(code)
+            return jsoncode
+
+        # database_contents = ''
+        # conn = sqlite3.connect('sqlite/library.db')
+        # try:
+        #     c = conn.cursor()
+        #     rows = c.execute('SELECT * FROM book_book')
+        #     for row in rows:
+        #         database_contents += f"{row}\n\n"
+        #     msg = 'Database Content test:' + database_contents
+        # finally:
+        #     return render_template('index.html', msg = msg)
+        #     conn.close()
+        
     elif 'id_l' in session:
         # for login
         pass
