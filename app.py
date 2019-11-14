@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, session
 from datetime import datetime
 import sqlite3
 from time import sleep
@@ -10,6 +10,9 @@ import requests
 
 
 app = Flask(__name__)
+
+app.secret_key = '56732356754345678'
+
 # reader = SimpleMFRC522()
 
 # def clean_GPIO():
@@ -63,31 +66,21 @@ def firstuse():
             return redirect(url_for('chooselogin'))
         elif 'next' in request.form:
             """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
-            # url = "http://localhost:5000/first/scancard"
-            # obj = {'id': 'id'}
-            # id = requests.post(url, obj)
-            # return "Hold your Card at the scanner"
+            return render_template('scan.html')
+        elif 'back2' in request.form:
+            return render_template('firstuse.html')
         else:
             return render_template('firstuse.html')
     else:
-        return render_template('firstuse.html')
-
-
-
-@app.route('/first/scancard', methods = ['POST', 'GET'])
-def scancardFirst():
-    if request.method == 'POST':
-        if request.form['id']:
-            return "3456765437876"
-        else:
-            return " didn't worked"
-        
+        return render_template('firstuse.html')        
 
 
 @app.route('/first/form')
 def cardrecognized():
     # Needs input
-    return render_template('email.html')
+    
+    id = session['id_f']
+    return render_template('email.html', id=id)
 
 
 @app.route('/first/confirm', methods = ['POST', 'GET'])
@@ -95,9 +88,14 @@ def emailconfirm():
     # Has to talk to the e-mail confirmation...
     # For the MVP just talk to database
     if request.method == 'POST':
-        first_name = request.form['first']
-        last_name = request.form['last']
-        email = (first_name + last_name + "@code.berlin")
+        first_name = request.form['first'].lower()
+        last_name = request.form['last'].lower()
+        email = (first_name + '.' + last_name + "@code.berlin")
+        # Put inside database
+
+        # Delete session
+        session.pop('id_f', None)
+        print('Session with the key id_f got cleaned up')
         return email
     else:
         return "doesn't work"
@@ -107,16 +105,37 @@ def doneFirst():
     # Needs name of user
     pass
     
-@app.route('/scan')
+@app.route('/scan', methods = ['GET'])
 def scan():
-    try:
-        id = int(reader.read_id())
-    except:
+    if request.method == 'GET':
+        try:
+            # id = str(reader.read_id())
+            id = "3464356456784"
+        except:
+            pass
+        else:
+            #Has to changed
+            # clean_GPIO()
+            session['id_f'] = id
+            return redirect(url_for('checkData'))
+    else:
+        return ('something went wrong')
+
+@app.route('/checkData')
+def checkData():
+    if 'id_f' in session:
+        id = session['id_f']
+        # Check id
+        print('yep')
+        return '1'
+    elif 'id_l' in session:
+        # for login
+        pass
+    elif 'id_b' in session:
+        # for scanning books
         pass
     else:
-        #Has to changed
-        clean_GPIO()
-        return redirect(url_for('checkData'))
+        print('Something went wrong')
 
 
 

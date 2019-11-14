@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/scan.css') }}">
+{% endblock %}
+
+{% block head %}
+<title>Scan Card</title>
+{% endblock %}
+
+{% block body %}
+<!-- <form action = "/" method = "post">
+    <button class="invisibleBox" type = "submit" name = "start" value = ""></button>
+</form> -->
+
+<h2>Scan a Card</h2>
+<p>Scan your choosen Card.</p>
+<p></p>
+<p>The system will give you feedback if the card is working.</p>
+<p id="demo"></p>
+
+<form action = "/first" method = "post">
+    <p><input type = "submit" name = "back2" value = "Back"/></p>
+</form>
+
+<script>
+function loadDoc() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText == '1') {
+            window.location = "/first/form";
+        }
+    }
+    };
+    xhttp.open("GET", "/scan", true);
+    xhttp.send();
+}
+loadDoc()
+</script>
+{% endblock %}

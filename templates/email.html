@@ -9,7 +9,8 @@
 {% endblock %}
 
 {% block body %}
-<form action = "http://localhost:5000/first/confirm" method = "post">
+<h1>{{id}}</h1>
+<form action = "/first/confirm" method = "post">
     <p>Enter Name:</p>
     <p><input type = "text" name = "first" /></p>
     <p><input type = "text" name = "last" /></p>
