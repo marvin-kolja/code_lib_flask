@@ -97,11 +97,12 @@ def doneFirst():
 @app.route('/scan', methods = ['GET'])
 def scan():
     if request.method == 'GET':
-        if request.form:
-            while True:
+        # if request.form:
+   	    while True:
                 try:
-                    id = str(reader.read_id())
+                    id = reader.read_id()
                     # id = "215531341298"
+                    id = str(id)
                 except:
                     return json.dumps({"code":"0x0"})
                 else:
@@ -110,8 +111,8 @@ def scan():
                     clean_GPIO()
                     session['id_f'] = id
                     return redirect(url_for('checkData'))
-        else:
-            return "This is for the server not the user!"
+        # else:
+            # return "This is for the server not the user!"
     else:
         return 'something went wrong'
 
