@@ -96,21 +96,20 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-   	    while True:
-                try:
-                    reader = SimpleMFRC522()
-                    id = reader.read_id()
-                    # id = "215531341298"
-                    id = str(id)
-                    print("loop")
-                except:
-                    return json.dumps({"code":"0x0"})
-                else:
-                    #Has to changed
-                    print("Scan succesfull")
-                    clean_GPIO()
-                    session['id_f'] = id
-                    return redirect(url_for('checkData'))
+        try:
+            reader = SimpleMFRC522()
+            id = reader.read_id()
+            # id = "215531341298"
+            id = str(id)
+            print("loop")
+        except:
+            return json.dumps({"code":"0x0"})
+        else:
+            #Has to changed
+            print("Scan succesfull")
+            clean_GPIO()
+            session['id_f'] = id
+            return redirect(url_for('checkData'))
     else:
         return 'something went wrong'
 

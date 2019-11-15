@@ -20,7 +20,7 @@
 <p id="demo"></p>
 
 <form action = "/first" method = "post">
-    <p><input type = "submit" name = "back2" value = "Back"/></p>
+    <p><input onclick="abortFunction()" type = "submit" name = "back2" value = "Back"/></p>
 </form>
 <script>
 function loadDoc() {
@@ -64,6 +64,10 @@ function loadDoc() {
         alert("The transfer has been canceled by the user.");
     }
     xhttp.send();
+    
+    function abortFunction() {
+        xhttp.abort()
+    }
     
 }
 loadDoc()
