@@ -86,7 +86,6 @@ def active_job():
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-    session['scan'] = 0
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
 
@@ -121,7 +120,6 @@ def firstuse():
             return render_template('scan.html')
         elif 'back2' in request.form:
             session.pop('scan', None)
-            session['scan'] = 0
             return render_template('firstuse.html')
         else:
             return render_template('firstuse.html')
@@ -164,12 +162,13 @@ def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
-        if session['scan'] == 0:
-            session.pop('scan', None)
-            session['scan'] = 1
+        if session.get('scan') == True:
+            print("scanner already scans")
+            pass
+        else:
+            session['scan'] = True
             r = requests.get('http://localhost:5000/scanner')
             session.pop('scan', None)
-            session['scan'] = 0
             print(r.text)
         timeout_start = time.time()
         while True:
