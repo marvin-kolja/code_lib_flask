@@ -120,6 +120,8 @@ def firstuse():
             """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
             return render_template('scan.html')
         elif 'back2' in request.form:
+            session.pop('scan', None)
+            session['scan'] = 0
             return render_template('firstuse.html')
         else:
             return render_template('firstuse.html')
