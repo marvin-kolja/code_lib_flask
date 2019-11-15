@@ -45,7 +45,7 @@ def active_job():
                 print('Session successfull')
                 data = {'id':id}
                 with open('temp/data.txt', 'w') as file:
-                    json.dump(data, outfile)
+                    json.dump(data, file)
                 sleep(2)
         print('Scanner offline')
         
