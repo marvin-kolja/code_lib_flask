@@ -1,5 +1,4 @@
 from flask import Flask, render_template, redirect, url_for, request, session
-import threading
 from datetime import datetime
 import sqlite3
 from time import sleep
@@ -16,33 +15,12 @@ app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-global scanner_on
-scanner_on = False
+reader = SimpleMFRC522()
 
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
-
-# @app.before_first_request
-# def active_job():
-#     def run_job():
-#         global scanner_on
-#         while scanner_on:
-#             try:
-#                 reader = SimpleMFRC522()
-#                 id = reader.read_id()
-#                 # id = "215531341298"
-#                 id = str(id)
-#             except:
-#                 return json.dumps({"code":"0x0"})
-#             else:
-#                 #Has to changed
-#                 print("Scan succesfull")
-#                 clean_GPIO()
-#                 session['id'] = id
-#     thread = threading.Thread(target=run_job)
-#     thread.start()
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -72,7 +50,6 @@ def chooselogin():
 
 @app.route('/first', methods = ['POST', 'GET'])
 def firstuse():
-    scanner_on = False
     if request.method == 'POST':
         if 'back' in request.form:
             return redirect(url_for('chooselogin'))
@@ -106,7 +83,7 @@ def emailconfirm():
         # Put inside database
 
         # Delete session
-        session.pop('id', None)
+        session.pop('id_f', None)
         print('Session with the key id_f got cleaned up')
         return email
     else:
@@ -120,28 +97,25 @@ def doneFirst():
 @app.route('/scan', methods = ['GET'])
 def scan():
     if request.method == 'GET':
-        # SHOULD NOT BE ACCESABLE FOR USERS
-        scanner_on = True
-        while scanner_on:
-            try:
-                reader = SimpleMFRC522()
-                id = reader.read_id()
-                # id = "215531341298"
-                id = str(id)
-            except:
-                return json.dumps({"code":"0x0"})
-            else:
-                #Has to changed
-                print("Scan succesfull")
-                clean_GPIO()
-                session['id_f'] = id
-                scanner_on = False
-        return json.dumps({"code":"0x1"})
-
+        # if request.form:
+   	    while True:
+                try:
+                    id = reader.read_id()
+                    # id = "215531id = str(id)
+                except:
+                    return json.dumps({"code":"0x0"})
+                else:
+                    #Has to changed
+                    print("Scan succesfull")
+                    clean_GPIO()
+                    session['id_f'] = id
+                    return redirect(url_for('checkData'))
+        # else:
+            # return "This is for the server not the user!"
     else:
         return 'something went wrong'
 
-@app.route('/checkData', methods = ['GET'])
+@app.route('/checkData')
 def checkData():
     if 'id_f' in session:
         id = int(session['id_f'])
@@ -193,5 +167,5 @@ def checkData():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', threaded=True)
+    app.run(debug=True, host='0.0.0.0')
 
