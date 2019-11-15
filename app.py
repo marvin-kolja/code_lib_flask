@@ -44,25 +44,13 @@ def active_job():
                 clean_GPIO()
                 print('Session successfull')
                 data = {'id':id}
-                requests.post(url = "http://localhost:5000/session", json = data)
+                with open('temp/data.txt', 'w') as file:
+                    json.dump(data, outfile)
                 sleep(2)
         print('Scanner offline')
         
     thread = threading.Thread(target=run_job)
     thread.start()
-
-@app.route('/session', methods = ['POST'])
-def createsession():
-    req_data = request.get_json()
-    id = req_data['id']
-    print(id)
-    # if 'scan' in session:
-    session['id'] = id
-    session.modified = True
-    print("session should be active")
-    return "okay"
-    # else:
-    #     return "not"
 
 
 @app.route('/', methods = ['POST', 'GET'])
@@ -141,19 +129,23 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-        session['id'] = 0
-        # session["scan"] = "1"
         timeout_start = time.time()
-        while session['id'] == 0:
+        while True:
             if time.time() > timeout_start + timeout:
-                session.pop('scan')
                 return json.dumps({'code':'0x2'})
             else:
-                print("no id")
-                sleep(5)
-                continue
-        session.pop('scan')
-        return json.dumps({"code":"0x1"})
+                try:
+                    with open('temp/data.txt') as json_file:
+                        data = json.load(json_file)
+                except:
+                    print("File is empty or reading Error")
+                else:
+                    id = data['id']
+                    session['id'] = id
+                    return json.dumps({"code":"0x1"})
+            print("no id")
+            sleep(1)
+            continue
     else:
         return 'something went wrong'
 
