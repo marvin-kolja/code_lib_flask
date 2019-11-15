@@ -50,7 +50,7 @@ def scanner():
             data = {'id':id}
             with open('temp/data.txt', 'w') as file:
                 json.dump(data, file)
-            break
+            return 'worked'
 
 
 
