@@ -24,25 +24,31 @@ def clean_GPIO():
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
 
-# @app.before_first_request
-# def active_job():
-#     def run_job():
-#         global scanner_on
-#         while scanner_on:
-#             try:
-#                 reader = SimpleMFRC522()
-#                 id = reader.read_id()
-#                 # id = "215531341298"
-#                 id = str(id)
-#             except:
-#                 return json.dumps({"code":"0x0"})
-#             else:
-#                 #Has to changed
-#                 print("Scan succesfull")
-#                 clean_GPIO()
-#                 session['id'] = id
-#     thread = threading.Thread(target=run_job)
-#     thread.start()
+@app.before_first_request
+def active_job():
+    def run_job():
+        global scanner_on
+        while scanner_on:
+            try:
+                print('ready to scan')
+                reader = SimpleMFRC522()
+                print('scanner initialized')
+                id = reader.read_id()
+                print('Scan successfull')
+                # id = "215531341298"
+                id = str(id)
+            except:
+                return json.dumps({"code":"0x0"})
+            else:
+                #Has to changed
+                print("convert successfull")
+                clean_GPIO()
+                session['id'] = id
+                print('Session successfull')
+                scanner_on = False
+        print('Scanner offline')
+    thread = threading.Thread(target=run_job)
+    thread.start()
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -123,25 +129,11 @@ def scan():
         # SHOULD NOT BE ACCESABLE FOR USERS
         scanner_on = True
         while scanner_on:
-            try:
-                print('ready to scan')
-                reader = SimpleMFRC522()
-                print('scanner initialized')
-                id = reader.read_id()
-                print('Scan successfull')
-                # id = "215531341298"
-                id = str(id)
-            except:
-                return json.dumps({"code":"0x0"})
+            if 'id' in session:
+                return json.dumps({"code":"0x1"})
             else:
-                #Has to changed
-                print("convert successfull")
-                clean_GPIO()
-                session['id_f'] = id
-                print('Session successfull')
-                scanner_on = False
-        print('Scanner offline')
-        return json.dumps({"code":"0x1"})
+                continue
+        return json.dumps({'code':'0x2'})
 
     else:
         return 'something went wrong'

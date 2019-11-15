@@ -47,6 +47,10 @@ function loadScanner() {
                 // Should report it to library team
                 loadScanner()
             }
+            if (responseObj.code == '0x2') {
+                abortFunction()
+            }
+
         }
     };
     // xhttp.onload = function() {
