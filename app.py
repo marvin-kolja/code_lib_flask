@@ -16,7 +16,6 @@ app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-global scanner_on
 scanner_on = False
 
 def clean_GPIO():
