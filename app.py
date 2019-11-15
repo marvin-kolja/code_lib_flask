@@ -29,8 +29,6 @@ def clean_GPIO():
 def scanner():
     while True:
         try:
-            session['scan'] = 1
-            session.modified = True
             print('ready to scan')
             reader = SimpleMFRC522()
             print('scanner initialized')
@@ -166,6 +164,8 @@ def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
+        session['scan'] = 1
+        session.modified = True
         if session['scan'] == 0:
             r = requests.get('http://localhost:5000/scanner')
             print(r.text)
