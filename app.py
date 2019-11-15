@@ -34,7 +34,8 @@ def scanner():
             print('scanner initialized')
             id = reader.read_id()
             print('Scan successfull')
-            session.modified = True
+            session.pop('scan', None)
+            session['scan'] = 0
             # id = "215531341298"
             id = str(id)
         except:
@@ -48,8 +49,6 @@ def scanner():
             data = {'id':id}
             with open('temp/data.txt', 'w') as file:
                 json.dump(data, file)
-            session.pop('scan', None)
-            session['scan'] = 0
             return 'worked'
 
 
