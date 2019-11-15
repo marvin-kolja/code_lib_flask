@@ -25,30 +25,6 @@ def clean_GPIO():
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
 
-@app.route('/scanner')
-def scanner():
-    while True:
-        try:
-            print('ready to scan')
-            reader = SimpleMFRC522()
-            print('scanner initialized')
-            id = reader.read_id()
-            print('Scan successfull')
-            # id = "215531341298"
-            id = str(id)
-        except:
-            print("Scan Error")
-            return json.dumps({"code":"0x0"})
-        else:
-            #Has to changed
-            print("convert successfull")
-            clean_GPIO()
-            print('Session successfull')    
-            data = {'id':id}
-            with open('temp/data.txt', 'w') as file:
-                json.dump(data, file)
-            return 'worked'
-
 
 
 @app.before_first_request
@@ -83,7 +59,6 @@ def active_job():
     # thread = threading.Thread(target=run_job)
     # thread.start()
 
-
 @app.route('/', methods = ['POST', 'GET'])
 def index():
     x = datetime.now()
@@ -96,6 +71,31 @@ def index():
             return render_template('index.html', date = x)
     else:
         return render_template('index.html', date = x)
+
+@app.route('/scanner')
+def scanner():
+    while True:
+        try:
+            session['scan'] = True
+            print('ready to scan')
+            reader = SimpleMFRC522()
+            print('scanner initialized')
+            id = reader.read_id()
+            print('Scan successfull')
+            # id = "215531341298"
+            id = str(id)
+        except:
+            print("Scan Error")
+            return json.dumps({"code":"0x0"})
+        else:
+            #Has to changed
+            print("convert successfull")
+            clean_GPIO()
+            print('Session successfull')    
+            data = {'id':id}
+            with open('temp/data.txt', 'w') as file:
+                json.dump(data, file)
+            return 'worked'
 
 @app.route('/chooselogin', methods = ['POST', 'GET'])
 def chooselogin():
@@ -119,7 +119,6 @@ def firstuse():
             """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
             return render_template('scan.html')
         elif 'back2' in request.form:
-            session.pop('scan', None)
             return render_template('firstuse.html')
         else:
             return render_template('firstuse.html')
@@ -164,11 +163,8 @@ def scan():
         os.system('rm temp/data.txt')
         if session.get('scan') == True:
             print("scanner already scans")
-            pass
         else:
-            session['scan'] = True
             r = requests.get('http://localhost:5000/scanner')
-            session.pop('scan', None)
             print(r.text)
         timeout_start = time.time()
         while True:
