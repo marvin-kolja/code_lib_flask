@@ -30,6 +30,7 @@ def scanner():
     while True:
         try:
             session['scan'] = 1
+            session.modified = True
             print('ready to scan')
             reader = SimpleMFRC522()
             print('scanner initialized')
