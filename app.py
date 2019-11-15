@@ -54,11 +54,11 @@ def active_job():
 @app.route('/session', methods = ['POST'])
 def createsession():
     id = request.args.get('id')
-    if 'scan' in session:
-        session['id'] = id
-        return "okay"
-    else:
-        return "not okay"
+    # if 'scan' in session:
+    session['id'] = id
+    return "okay"
+    # else:
+    #     return "not"
 
 
 @app.route('/', methods = ['POST', 'GET'])
