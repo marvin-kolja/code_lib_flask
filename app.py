@@ -75,6 +75,7 @@ def index():
 @app.route('/scanner')
 def scanner():
     session['scanning'] = True
+    print(session['scanning'])
     while True:
         try:
             print('ready to scan')
@@ -161,6 +162,7 @@ def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
+        print(session['scanning'])
         if session.get('scanning') == True:
             print("Scanner already scans")
         else:
