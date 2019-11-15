@@ -56,6 +56,7 @@ def scanner():
 
 @app.before_first_request
 def active_job():
+    print("Hello")
     # def run_job():
     #     while True:
     #         if "scan" in session:
