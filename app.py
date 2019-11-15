@@ -16,7 +16,7 @@ import time
 
 app = Flask(__name__)
 
-app.secret_key = '56732356754345678'
+
 
 timeout = 30
 
@@ -243,5 +243,6 @@ def checkData():
 
 
 if __name__ == "__main__":
+    app.secret_key = '56732356754345678'
     app.run(debug=True, host='0.0.0.0', threaded=True)
 
