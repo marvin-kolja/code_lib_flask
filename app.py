@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-scanner_on = True
+scanner_on = False
 
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
@@ -42,10 +42,11 @@ def active_job():
                 #Has to changed
                 print("convert successfull")
                 clean_GPIO()
-                session['id'] = id
                 print('Session successfull')
                 scanner_on = False
+                return id
         print('Scanner offline')
+        
     thread = threading.Thread(target=run_job)
     thread.start()
 
@@ -127,11 +128,14 @@ def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         scanner_on = True
+        id = active_job()
+        print(id)
         while scanner_on:
             if 'id' in session:
                 return json.dumps({"code":"0x1"})
             else:
                 print("no id")
+                sleep(5)
                 continue
         return json.dumps({'code':'0x2'})
 
