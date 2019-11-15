@@ -3,6 +3,7 @@ import threading
 from datetime import datetime
 import sqlite3
 from time import sleep
+import os
 import sys
 import random
 import requests
@@ -25,30 +26,33 @@ def clean_GPIO():
     print("GPIO has been cleaned up...")
 
 @app.before_first_request
+@app.route('/rtzuio')
 def active_job():
     def run_job():
         while True:
-            try:
-                print('ready to scan')
-                reader = SimpleMFRC522()
-                print('scanner initialized')
-                id = reader.read_id()
-                print('Scan successfull')
-                # id = "215531341298"
-                id = str(id)
-            except:
-                return json.dumps({"code":"0x0"})
-            else:
-                #Has to changed
-                print("convert successfull")
-                clean_GPIO()
-                print('Session successfull')
-                if "scan" in session:
+            if "scan" in session:
+                try:
+                    print('ready to scan')
+                    reader = SimpleMFRC522()
+                    print('scanner initialized')
+                    id = reader.read_id()
+                    print('Scan successfull')
+                    # id = "215531341298"
+                    id = str(id)
+                except:
+                    return json.dumps({"code":"0x0"})
+                else:
+                    #Has to changed
+                    print("convert successfull")
+                    clean_GPIO()
+                    print('Session successfull')    
                     data = {'id':id}
                     with open('temp/data.txt', 'w') as file:
                         json.dump(data, file)
-                sleep(2)
-        print('Scanner offline')
+                    sleep(1)
+            else:
+                print('Scanner offline')
+                sleep(1)
         
     thread = threading.Thread(target=run_job)
     thread.start()
