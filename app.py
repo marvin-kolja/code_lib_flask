@@ -119,23 +119,21 @@ def active_job():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-        while True:
-            try:
-                id = session['id']
-            except:
-                print("no id")
-                sleep(5)
-                continue
-            else:
-                return redirect(url_for('checkData'))
+        scanner_on = True
+        while 'id' not in session:
+            print("no id")
+            sleep(1)
+            continue
+        scanner_on = False
+        return redirect(url_for('checkData'))
 
     else:
         return 'something went wrong'
 
 @app.route('/checkData')
 def checkData():
-    if 'id_f' in session:
-        id = int(session['id_f'])
+    if 'id' in session:
+        id = int(session['id'])
         try:
             op = Operations()
             print('Database connected')
