@@ -16,6 +16,7 @@ app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
+global scanner_on
 scanner_on = False
 
 def clean_GPIO():
@@ -26,7 +27,6 @@ def clean_GPIO():
 @app.before_first_request
 def active_job():
     def run_job():
-        global scanner_on
         while scanner_on:
             try:
                 print('ready to scan')
