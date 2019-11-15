@@ -25,8 +25,13 @@
 <script>
 function loadDoc() {
     var xhttp = new XMLHttpRequest();
+
+    xhttp.addEventListener("abort", transferCanceled);
+
     xhttp.open("GET", "/scan", true);
+
     xhttp.responseType = 'json';
+
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var responseObj = xhttp.response;
@@ -55,7 +60,10 @@ function loadDoc() {
     // xhttp.onload = function() {
 
     // };
-    xhttp.send('110');
+    function transferCanceled(evt) {
+        alert("The transfer has been canceled by the user.");
+    }
+    xhttp.send();
     
 }
 loadDoc()

@@ -102,6 +102,7 @@ def scan():
                     id = reader.read_id()
                     # id = "215531341298"
                     id = str(id)
+                    print("loop")
                 except:
                     return json.dumps({"code":"0x0"})
                 else:
