@@ -124,18 +124,23 @@ def scan():
         scanner_on = True
         while scanner_on:
             try:
+                print('ready to scan')
                 reader = SimpleMFRC522()
+                print('scanner initialized')
                 id = reader.read_id()
+                print('Scan successfull')
                 # id = "215531341298"
                 id = str(id)
             except:
                 return json.dumps({"code":"0x0"})
             else:
                 #Has to changed
-                print("Scan succesfull")
+                print("convert successfull")
                 clean_GPIO()
                 session['id_f'] = id
+                print('Session successfull')
                 scanner_on = False
+        print('Scanner offline')
         return json.dumps({"code":"0x1"})
 
     else:
