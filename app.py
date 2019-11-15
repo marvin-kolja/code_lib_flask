@@ -34,8 +34,6 @@ def scanner():
             print('scanner initialized')
             id = reader.read_id()
             print('Scan successfull')
-            session.pop('scan', None)
-            session['scan'] = 0
             # id = "215531341298"
             id = str(id)
         except:
@@ -168,6 +166,8 @@ def scan():
             session.pop('scan', None)
             session['scan'] = 1
             r = requests.get('http://localhost:5000/scanner')
+            session.pop('scan', None)
+            session['scan'] = 0
             print(r.text)
         timeout_start = time.time()
         while True:
