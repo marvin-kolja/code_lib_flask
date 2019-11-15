@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, session
+import threading
 from datetime import datetime
 import sqlite3
 from time import sleep
@@ -14,6 +15,8 @@ from mfrc522 import SimpleMFRC522
 app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
+
+scanner_on = False
 
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
@@ -91,25 +94,41 @@ def emailconfirm():
 def doneFirst():
     # Needs name of user
     pass
+
+@app.before_first_request
+def active_job():
+    def run_job():
+        global scanner_on
+        while scanner_on:
+            try:
+                reader = SimpleMFRC522()
+                id = reader.read_id()
+                # id = "215531341298"
+                id = str(id)
+            except:
+                return json.dumps({"code":"0x0"})
+            else:
+                #Has to changed
+                print("Scan succesfull")
+                clean_GPIO()
+                session['id'] = id
+    thread = threading.Thread(target=run_job)
+    thread.start()
     
 @app.route('/scan', methods = ['GET'])
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-        try:
-            reader = SimpleMFRC522()
-            id = reader.read_id()
-            # id = "215531341298"
-            id = str(id)
-            print("loop")
-        except:
-            return json.dumps({"code":"0x0"})
-        else:
-            #Has to changed
-            print("Scan succesfull")
-            clean_GPIO()
-            session['id_f'] = id
-            return redirect(url_for('checkData'))
+        while True:
+            try:
+                id = session['id']
+            except:
+                print("no id")
+                sleep(5)
+                continue
+            else:
+                return redirect(url_for('checkData'))
+
     else:
         return 'something went wrong'
 
@@ -165,5 +184,5 @@ def checkData():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', threaded=True)
 
