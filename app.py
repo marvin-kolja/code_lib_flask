@@ -182,7 +182,6 @@ def scan():
                     id = data['id']
                     os.system('rm temp/data.txt')
                     session['id'] = id
-                    session.pop('scan', None)
                     return json.dumps({"code":"0x1"})
             print("no id")
             sleep(1)
