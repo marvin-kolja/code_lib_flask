@@ -29,15 +29,11 @@ def clean_GPIO():
 def scanner():
     while True:
         try:
-            session.pop('scan', None)
-            session['scan'] = 1
             print('ready to scan')
             reader = SimpleMFRC522()
             print('scanner initialized')
             id = reader.read_id()
             print('Scan successfull')
-            session.pop('scan', None)
-            session['scan'] = 0
             session.modified = True
             # id = "215531341298"
             id = str(id)
@@ -52,6 +48,8 @@ def scanner():
             data = {'id':id}
             with open('temp/data.txt', 'w') as file:
                 json.dump(data, file)
+            session.pop('scan', None)
+            session['scan'] = 0
             return 'worked'
 
 
@@ -168,6 +166,8 @@ def scan():
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
         if session['scan'] == 0:
+            session.pop('scan', None)
+            session['scan'] = 1
             r = requests.get('http://localhost:5000/scanner')
             print(r.text)
         timeout_start = time.time()
