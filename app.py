@@ -43,9 +43,10 @@ def active_job():
                 print("convert successfull")
                 clean_GPIO()
                 print('Session successfull')
-                data = {'id':id}
-                with open('temp/data.txt', 'w') as file:
-                    json.dump(data, file)
+                if "scan" in session:
+                    data = {'id':id}
+                    with open('temp/data.txt', 'w') as file:
+                        json.dump(data, file)
                 sleep(2)
         print('Scanner offline')
         
@@ -129,6 +130,7 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
+        session["scan"] = "true"
         timeout_start = time.time()
         while True:
             if time.time() > timeout_start + timeout:
@@ -141,7 +143,9 @@ def scan():
                     print("File is empty or reading Error")
                 else:
                     id = data['id']
+                    os.system('rm temp/data.txt')
                     session['id'] = id
+                    session.pop('scan', None)
                     return json.dumps({"code":"0x1"})
             print("no id")
             sleep(1)
