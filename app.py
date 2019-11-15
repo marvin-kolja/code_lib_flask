@@ -44,7 +44,7 @@ def active_job():
                 clean_GPIO()
                 print('Session successfull')
                 data = {'id':id}
-                requests.post(url = "http://localhost:5000/session", data = data)
+                requests.post(url = "http://localhost:5000/session", json = data)
                 sleep(2)
         print('Scanner offline')
         
@@ -53,7 +53,8 @@ def active_job():
 
 @app.route('/session', methods = ['POST'])
 def createsession():
-    id = request.args.get('id')
+    req_data = request.get_json()
+    id = req_data['id']
     print(id)
     # if 'scan' in session:
     session['id'] = id
