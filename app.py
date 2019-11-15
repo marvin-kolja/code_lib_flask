@@ -45,7 +45,7 @@ def active_job():
                 print('Session successfull')
                 data = {'id':id}
                 requests.post(url = "http://localhost:5000/session", data = data)
-                
+                sleep(2)
         print('Scanner offline')
         
     thread = threading.Thread(target=run_job)
@@ -54,6 +54,7 @@ def active_job():
 @app.route('/session', methods = ['POST'])
 def createsession():
     id = request.args.get('id')
+    print(id)
     # if 'scan' in session:
     session['id'] = id
     return "okay"
