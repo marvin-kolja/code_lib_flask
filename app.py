@@ -163,6 +163,7 @@ def scan():
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
         scanning = session.get('scanning')
+        print(scanning)
         if scanning == True:
             print("Scanner already scans")
         else:
