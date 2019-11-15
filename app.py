@@ -75,7 +75,6 @@ def index():
 @app.route('/scanner')
 def scanner():
     session['scanning'] = True
-    print(session['scanning'])
     while True:
         try:
             print('ready to scan')
@@ -84,6 +83,7 @@ def scanner():
             id = reader.read_id()
             print('Scan successfull')
             # id = "215531341298"
+            session.pop('scanning')
             id = str(id)
         except:
             print("Scan Error")
