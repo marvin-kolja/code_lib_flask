@@ -161,8 +161,9 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
+        session['scanning'] = True
         os.system('rm temp/data.txt')
-        scanning = request.session.get('scanning')
+        scanning = session.get('scanning')
         print(scanning)
         if scanning == True:
             print("Scanner already scans")
