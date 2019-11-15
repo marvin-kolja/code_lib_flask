@@ -37,14 +37,13 @@ function loadScanner() {
             var responseObj = xhttp.response;
 
             if (responseObj.code == '0x1') {
-                // alert scanner error
-                alert("Something went wrong with the scanner!")
-                // Should report it to library team
+                // alert scan succesfull
+                alert("Card was succesfully scanned!")
                 loadCheck()
             }
             if (responseObj.code == '0x0') {
                 // alert scanner error
-                alert("Something went wrong with the scanner!")
+                alert("Something went wrong with the scanner! Try again...")
                 // Should report it to library team
                 loadScanner()
             }
