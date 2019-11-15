@@ -17,11 +17,32 @@ app = Flask(__name__)
 app.secret_key = '56732356754345678'
 
 scanner_on = False
+global scanner_on
 
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
+
+# @app.before_first_request
+# def active_job():
+#     def run_job():
+#         global scanner_on
+#         while scanner_on:
+#             try:
+#                 reader = SimpleMFRC522()
+#                 id = reader.read_id()
+#                 # id = "215531341298"
+#                 id = str(id)
+#             except:
+#                 return json.dumps({"code":"0x0"})
+#             else:
+#                 #Has to changed
+#                 print("Scan succesfull")
+#                 clean_GPIO()
+#                 session['id'] = id
+#     thread = threading.Thread(target=run_job)
+#     thread.start()
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -51,6 +72,7 @@ def chooselogin():
 
 @app.route('/first', methods = ['POST', 'GET'])
 def firstuse():
+    scanner_on = False
     if request.method == 'POST':
         if 'back' in request.form:
             return redirect(url_for('chooselogin'))
@@ -84,7 +106,7 @@ def emailconfirm():
         # Put inside database
 
         # Delete session
-        session.pop('id_f', None)
+        session.pop('id', None)
         print('Session with the key id_f got cleaned up')
         return email
     else:
@@ -94,11 +116,12 @@ def emailconfirm():
 def doneFirst():
     # Needs name of user
     pass
-
-@app.before_first_request
-def active_job():
-    def run_job():
-        global scanner_on
+    
+@app.route('/scan', methods = ['GET'])
+def scan():
+    if request.method == 'GET':
+        # SHOULD NOT BE ACCESABLE FOR USERS
+        scanner_on = True
         while scanner_on:
             try:
                 reader = SimpleMFRC522()
@@ -111,29 +134,17 @@ def active_job():
                 #Has to changed
                 print("Scan succesfull")
                 clean_GPIO()
-                session['id'] = id
-    thread = threading.Thread(target=run_job)
-    thread.start()
-    
-@app.route('/scan', methods = ['GET'])
-def scan():
-    if request.method == 'GET':
-        # SHOULD NOT BE ACCESABLE FOR USERS
-        scanner_on = True
-        while 'id' not in session:
-            print("no id")
-            sleep(1)
-            continue
-        scanner_on = False
-        return redirect(url_for('checkData'))
+                session['id_f'] = id
+                scanner_on = False
+        return json.dumps({"code":"0x1"})
 
     else:
         return 'something went wrong'
 
-@app.route('/checkData')
+@app.route('/checkData', methods = ['GET'])
 def checkData():
-    if 'id' in session:
-        id = int(session['id'])
+    if 'id_f' in session:
+        id = int(session['id_f'])
         try:
             op = Operations()
             print('Database connected')

@@ -23,7 +23,7 @@
     <p><input onclick="abortFunction()" type = "submit" name = "back2" value = "Back"/></p>
 </form>
 <script>
-function loadDoc() {
+function loadScanner() {
     var xhttp = new XMLHttpRequest();
 
     xhttp.addEventListener("abort", transferCanceled);
@@ -36,21 +36,54 @@ function loadDoc() {
         if (this.readyState == 4 && this.status == 200) {
             var responseObj = xhttp.response;
 
+            if (responseObj.code == '0x1') {
+                // alert scanner error
+                alert("Something went wrong with the scanner!")
+                // Should report it to library team
+                loadCheck()
+            }
             if (responseObj.code == '0x0') {
                 // alert scanner error
                 alert("Something went wrong with the scanner!")
                 // Should report it to library team
-                loadDoc()
+                loadScanner()
             }
+        }
+    };
+    // xhttp.onload = function() {
+
+    // };
+    function transferCanceled(evt) {
+        alert("The transfer has been canceled by the user.");
+    }
+    xhttp.send();
+
+    function abortFunction() {
+        xhttp.abort()
+    }
+    
+}
+function loadCheck() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.addEventListener("abort", transferCanceled);
+
+    xhttp.open("GET", "/checkData", true);
+
+    xhttp.responseType = 'json';
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var responseObj = xhttp.response;
             if (responseObj.code == '1x0') {
                 // alert User is already connected with this ID
                 alert("The scanned ID is already connected to a user!")
-                loadDoc()
+                loadScanner()
             }
             if (responseObj.code == '1x1') {
                 // alert Book is already connected with this ID
                 alert("The scanned ID is already connected to a user!")
-                loadDoc()
+                loadScanner()
             }
             if (responseObj.code == '1x2') {
                 window.location = "/first/form";
@@ -64,12 +97,11 @@ function loadDoc() {
         alert("The transfer has been canceled by the user.");
     }
     xhttp.send();
-    
+
     function abortFunction() {
         xhttp.abort()
     }
-    
 }
-loadDoc()
+loadScanner()
 </script>
 {% endblock %}
