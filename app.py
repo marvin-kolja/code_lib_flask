@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-scanner_on = False
+scanner_on = True
 
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
