@@ -43,11 +43,20 @@ def active_job():
                 print("convert successfull")
                 clean_GPIO()
                 print('Session successfull')
-                return id
+                data = {'id':id}
+                if 'scan' in session:
+                    requests.post(url = "http://localhost:5000/session", data = data)
+                
         print('Scanner offline')
         
     thread = threading.Thread(target=run_job)
     thread.start()
+
+@app.route('/session', methods = ['POST'])
+def createsession():
+    id = request.args.get('id')
+    session['id'] = id
+
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -95,7 +104,7 @@ def firstuse():
 def cardrecognized():
     # Needs input
     
-    id = session['id_f']
+    id = session['id']
     return render_template('email.html', id=id)
 
 
@@ -125,25 +134,25 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-        id = active_job()
+        session["scan"] = "1"
         timeout_start = time.time()
-        while id == None:
+        while 'id' not in session:
             if time.time() > timeout_start + timeout:
+                session.pop('scan')
                 return json.dumps({'code':'0x2'})
             else:
                 print("no id")
                 sleep(5)
                 continue
-        print(id)
-        session['id'] = id
+        session.pop('scan')
         return json.dumps({"code":"0x1"})
     else:
         return 'something went wrong'
 
 @app.route('/checkData', methods = ['GET'])
 def checkData():
-    if 'id_f' in session:
-        id = int(session['id_f'])
+    if 'id' in session:
+        id = int(session['id'])
         try:
             op = Operations()
             print('Database connected')
