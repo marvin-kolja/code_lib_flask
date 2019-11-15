@@ -166,7 +166,7 @@ def scan():
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
         if session['scan'] == 0:
-            r = request.get('http://localhost:5000/scanner')
+            r = requests.get('http://localhost:5000/scanner')
             print(r.text)
         timeout_start = time.time()
         while True:
