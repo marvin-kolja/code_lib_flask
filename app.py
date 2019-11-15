@@ -56,7 +56,6 @@ def scanner():
 
 @app.before_first_request
 def active_job():
-    session['scan'] = 0
     # def run_job():
     #     while True:
     #         if "scan" in session:
@@ -89,6 +88,7 @@ def active_job():
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
+    session['scan'] = 0
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
 
@@ -164,7 +164,7 @@ def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         os.system('rm temp/data.txt')
-        if session['scan'] = 0:
+        if session['scan'] == 0:
             r = request.get('http://localhost:5000/scanner')
             print(r.text)
         timeout_start = time.time()
