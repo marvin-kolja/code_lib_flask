@@ -131,6 +131,7 @@ def scan():
             if 'id' in session:
                 return json.dumps({"code":"0x1"})
             else:
+                print("no id")
                 continue
         return json.dumps({'code':'0x2'})
 
