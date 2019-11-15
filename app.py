@@ -25,37 +25,66 @@ def clean_GPIO():
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
 
+@app.route('/scanner')
+def scanner():
+    while True:
+        try:
+            session['scan'] = 1
+            print('ready to scan')
+            reader = SimpleMFRC522()
+            print('scanner initialized')
+            id = reader.read_id()
+            print('Scan successfull')
+            session['scan'] = 0
+            session.modified = True
+            # id = "215531341298"
+            id = str(id)
+        except:
+            print("Scan Error")
+            return json.dumps({"code":"0x0"})
+        else:
+            #Has to changed
+            print("convert successfull")
+            clean_GPIO()
+            print('Session successfull')    
+            data = {'id':id}
+            with open('temp/data.txt', 'w') as file:
+                json.dump(data, file)
+            break
+
+
+
 @app.before_first_request
-@app.route('/rtzuio')
 def active_job():
-    def run_job():
-        while True:
-            if "scan" in session:
-                try:
-                    print('ready to scan')
-                    reader = SimpleMFRC522()
-                    print('scanner initialized')
-                    id = reader.read_id()
-                    print('Scan successfull')
-                    # id = "215531341298"
-                    id = str(id)
-                except:
-                    return json.dumps({"code":"0x0"})
-                else:
-                    #Has to changed
-                    print("convert successfull")
-                    clean_GPIO()
-                    print('Session successfull')    
-                    data = {'id':id}
-                    with open('temp/data.txt', 'w') as file:
-                        json.dump(data, file)
-                    sleep(1)
-            else:
-                print('Scanner offline')
-                sleep(1)
+    session['scan'] = 0
+    # def run_job():
+    #     while True:
+    #         if "scan" in session:
+    #             try:
+    #                 print('ready to scan')
+    #                 reader = SimpleMFRC522()
+    #                 print('scanner initialized')
+    #                 id = reader.read_id()
+    #                 print('Scan successfull')
+    #                 # id = "215531341298"
+    #                 id = str(id)
+    #             except:
+    #                 return json.dumps({"code":"0x0"})
+    #             else:
+    #                 #Has to changed
+    #                 print("convert successfull")
+    #                 clean_GPIO()
+    #                 print('Session successfull')    
+    #                 data = {'id':id}
+    #                 with open('temp/data.txt', 'w') as file:
+    #                     json.dump(data, file)
+    #                 sleep(1)
+    #         else:
+    #             print('Scanner offline')
+    #             sleep(1)
         
-    thread = threading.Thread(target=run_job)
-    thread.start()
+    # thread = threading.Thread(target=run_job)
+    # thread.start()
 
 
 @app.route('/', methods = ['POST', 'GET'])
@@ -134,7 +163,10 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-        session["scan"] = "true"
+        os.system('rm temp/data.txt')
+        if session['scan'] = 0:
+            r = request.get('http://localhost:5000/scanner')
+            print(r.text)
         timeout_start = time.time()
         while True:
             if time.time() > timeout_start + timeout:
