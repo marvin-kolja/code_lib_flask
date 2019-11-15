@@ -15,8 +15,6 @@ app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-reader = SimpleMFRC522()
-
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
@@ -97,9 +95,10 @@ def doneFirst():
 @app.route('/scan', methods = ['GET'])
 def scan():
     if request.method == 'GET':
-        # if request.form:
+        # SHOULD NOT BE ACCESABLE FOR USERS
    	    while True:
                 try:
+                    reader = SimpleMFRC522()
                     id = reader.read_id()
                     # id = "215531341298"
                     id = str(id)
@@ -111,8 +110,6 @@ def scan():
                     clean_GPIO()
                     session['id_f'] = id
                     return redirect(url_for('checkData'))
-        # else:
-            # return "This is for the server not the user!"
     else:
         return 'something went wrong'
 
