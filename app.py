@@ -10,12 +10,14 @@ import json
 from sqlite.operation_functions import Operations
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
-from interruptingcow import timeout
+import time
 
 
 app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
+
+timeout = 30
 
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
@@ -124,18 +126,17 @@ def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         id = active_job()
-        try:
-            with timeout(30, exception=RuntimeError):
-                while id == None:
-                    print("no id")
-                    sleep(5)
-                    continue
-        except RuntimeError:
-            return json.dumps({'code':'0x2'})
-        else:
-            print(id)
-            session['id'] = id
-            return json.dumps({"code":"0x1"})
+        timeout_start = time.time()
+        while id == None:
+            if time.time() > timeout_start + timeout:
+                return json.dumps({'code':'0x2'})
+            else:
+                print("no id")
+                sleep(5)
+                continue
+        print(id)
+        session['id'] = id
+        return json.dumps({"code":"0x1"})
     else:
         return 'something went wrong'
 
