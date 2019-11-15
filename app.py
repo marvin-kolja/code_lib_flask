@@ -10,24 +10,22 @@ import json
 from sqlite.operation_functions import Operations
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
+from interruptingcow import timeout
 
 
 app = Flask(__name__)
 
 app.secret_key = '56732356754345678'
 
-scanner_on = False
-
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
 
-
+@app.before_first_request
 def active_job():
     def run_job():
-        global scanner_on
-        while scanner_on:
+        while True:
             try:
                 print('ready to scan')
                 reader = SimpleMFRC522()
@@ -43,7 +41,6 @@ def active_job():
                 print("convert successfull")
                 clean_GPIO()
                 print('Session successfull')
-                scanner_on = False
                 return id
         print('Scanner offline')
         
@@ -78,7 +75,6 @@ def chooselogin():
 
 @app.route('/first', methods = ['POST', 'GET'])
 def firstuse():
-    scanner_on = False
     if request.method == 'POST':
         if 'back' in request.form:
             return redirect(url_for('chooselogin'))
@@ -127,18 +123,19 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
-        scanner_on = True
         id = active_job()
-        print(id)
-        while scanner_on:
-            if 'id' in session:
-                return json.dumps({"code":"0x1"})
-            else:
-                print("no id")
-                sleep(5)
-                continue
-        return json.dumps({'code':'0x2'})
-
+        try:
+            with timeout(30, exception=RuntimeError):
+                while id == None:
+                    print("no id")
+                    sleep(5)
+                    continue
+        except RuntimeError:
+            return json.dumps({'code':'0x2'})
+        else:
+            print(id)
+            session['id'] = id
+            return json.dumps({"code":"0x1"})
     else:
         return 'something went wrong'
 

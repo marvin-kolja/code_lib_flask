@@ -11,6 +11,7 @@ requests = "*"
 flask-session = "*"
 rpi-gpio = "*"
 mfrc522 = "*"
+interruptingcow = "*"
 
 [requires]
 python_version = "3.7"
