@@ -166,7 +166,7 @@ def scan():
         if scanning == True:
             print("Scanner already scans")
         else:
-            r = requests.get('http://localhost:5000/scanner')
+            r = requests.get('http://localhost:5000/scanner', timeout=5)
             print(r.text)
         timeout_start = time.time()
         while True:
