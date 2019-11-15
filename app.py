@@ -58,6 +58,7 @@ def createsession():
     print(id)
     # if 'scan' in session:
     session['id'] = id
+    session.modified = True
     print("session should be active")
     return "okay"
     # else:
@@ -140,9 +141,10 @@ def doneFirst():
 def scan():
     if request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
+        session['id'] = 0
         # session["scan"] = "1"
         timeout_start = time.time()
-        while 'id' not in session:
+        while session['id'] == 0:
             if time.time() > timeout_start + timeout:
                 session.pop('scan')
                 return json.dumps({'code':'0x2'})
