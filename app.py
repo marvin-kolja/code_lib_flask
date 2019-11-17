@@ -20,6 +20,9 @@ app = Flask(__name__)
 
 timeout = 30
 
+global stop_threads
+stop_threads = True
+
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
@@ -27,37 +30,33 @@ def clean_GPIO():
 
 
 
-@app.before_first_request
-def active_job():
-    print("Hello")
-    # def run_job():
-    #     while True:
-    #         if "scan" in session:
-    #             try:
-    #                 print('ready to scan')
-    #                 reader = SimpleMFRC522()
-    #                 print('scanner initialized')
-    #                 id = reader.read_id()
-    #                 print('Scan successfull')
-    #                 # id = "215531341298"
-    #                 id = str(id)
-    #             except:
-    #                 return json.dumps({"code":"0x0"})
-    #             else:
-    #                 #Has to changed
-    #                 print("convert successfull")
-    #                 clean_GPIO()
-    #                 print('Session successfull')    
-    #                 data = {'id':id}
-    #                 with open('temp/data.txt', 'w') as file:
-    #                     json.dump(data, file)
-    #                 sleep(1)
-    #         else:
-    #             print('Scanner offline')
-    #             sleep(1)
-        
-    # thread = threading.Thread(target=run_job)
-    # thread.start()
+# @app.before_first_request
+# def active_job():
+#     print("Hello")
+def run_job():
+    while True:
+        if stop_threads == True:
+            break
+        try:
+            print('ready to scan')
+            reader = SimpleMFRC522()
+            print('scanner initialized')
+            id = reader.read_id()
+            print('Scan successfull')
+            # id = "215531341298"
+            id = str(id)
+        except:
+            return json.dumps({"code":"0x0"})
+        else:
+            #Has to changed
+            print("convert successfull")
+            clean_GPIO()  
+            data = {'id':id}
+            with open('temp/data.txt', 'w') as file:
+                json.dump(data, file)
+            print("id printed to file")
+    
+thread = threading.Thread(target=run_job)
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -72,31 +71,31 @@ def index():
     else:
         return render_template('index.html', date = x)
 
-@app.route('/scanner')
-def scanner():
-    session['scanning'] = True
-    while True:
-        try:
-            print('ready to scan')
-            reader = SimpleMFRC522()
-            print('scanner initialized')
-            id = reader.read_id()
-            print('Scan successfull')
-            # id = "215531341298"
-            session.pop('scanning')
-            id = str(id)
-        except:
-            print("Scan Error")
-            return json.dumps({"code":"0x0"})
-        else:
-            #Has to changed
-            print("convert successfull")
-            clean_GPIO()
-            print('Session successfull')    
-            data = {'id':id}
-            with open('temp/data.txt', 'w') as file:
-                json.dump(data, file)
-            return 'worked'
+# @app.route('/scanner')
+# def scanner():
+#     session['scanning'] = True
+#     while True:
+#         try:
+#             print('ready to scan')
+#             reader = SimpleMFRC522()
+#             print('scanner initialized')
+#             id = reader.read_id()
+#             print('Scan successfull')
+#             # id = "215531341298"
+#             session.pop('scanning')
+#             id = str(id)
+#         except:
+#             print("Scan Error")
+#             return json.dumps({"code":"0x0"})
+#         else:
+#             #Has to changed
+#             print("convert successfull")
+#             clean_GPIO()
+#             print('Session successfull')    
+#             data = {'id':id}
+#             with open('temp/data.txt', 'w') as file:
+#                 json.dump(data, file)
+#             return 'worked'
 
 @app.route('/chooselogin', methods = ['POST', 'GET'])
 def chooselogin():
@@ -118,9 +117,7 @@ def firstuse():
             return redirect(url_for('chooselogin'))
         elif 'next' in request.form:
             """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
-            return render_template('scan.html')
-        elif 'back2' in request.form:
-            return render_template('firstuse.html')
+            return redirect(url_for('scan'))
         else:
             return render_template('firstuse.html')
     else:
@@ -147,7 +144,7 @@ def emailconfirm():
 
         # Delete session
         session.pop('id', None)
-        print('Session with the key id_f got cleaned up')
+        print('Session with the key id got cleaned up')
         return email
     else:
         return "doesn't work"
@@ -159,7 +156,18 @@ def doneFirst():
     
 @app.route('/scan', methods = ['GET', 'POST'])
 def scan():
-    if request.method == 'GET':
+    # POST / FETCH to update this side if scanner scanned something
+    if request.method == 'POST':
+        if 'back2' in request.form:
+            os.system('rm temp/data.txt')
+            stop_threads = True
+            thread.join()
+            return redirect(url_for('firstuse'))
+        else:
+            os.system('rm temp/data.txt')
+            thread.start()
+            return render_template('scan.html')
+    elif request.method == 'GET':
         # SHOULD NOT BE ACCESABLE FOR USERS
         session['scanning'] = True
         os.system('rm temp/data.txt')
