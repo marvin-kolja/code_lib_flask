@@ -26,7 +26,7 @@ def clean_GPIO():
     print("GPIO has been cleaned up...")
 
 def requestScan(data):
-    r = requests.post('http://192.168.0.50:5000/scan', json=data)
+    r = requests.post('http://192.168.0.27:5000/scan', json=data)
 
 def run_job():
     global stop_threads
