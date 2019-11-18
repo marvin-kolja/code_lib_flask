@@ -20,12 +20,6 @@ app = Flask(__name__)
 
 timeout = 30
 
-global stop_threads
-stop_threads = True
-
-global scanning
-scanning = False
-
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
@@ -35,49 +29,55 @@ def clean_GPIO():
 
 
 def run_job():
+    global stop_threads
+    global scanning
     while True:
         if stop_threads == True:
             print("Scanner not scanning!")
-            sleep(1)
+            sleep(2)
             continue
-        try:
-            print('ready to scan')
-
-            reader = SimpleMFRC522()
-
-            print('scanner initialized')
-
-            scanning = True
-            id = reader.read_id()
-            scanning = False
-
-            print('Scan successfull')
-            
-            if stop_threads == True:
-                continue
-
-            id = str(id)
-        except:
-            return json.dumps({"code":"0x0"})
         else:
-            #Has to changed
-            print("convert successfull")
+            try:
+                print('ready to scan')
 
-            clean_GPIO()  
+                reader = SimpleMFRC522()
 
-            data = {'id':id}
-            r = requests.post('http://localhost/scan', json=data)
+                print('scanner initialized')
 
-            with open('temp/data.txt', 'w') as file:
-                json.dump(data, file)
+                scanning = True
+                id = reader.read_id()
+                scanning = False
 
-            print("id printed to file")
+                print('Scan successfull')
+                
+                if stop_threads == True:
+                    continue
+
+                id = str(id)
+            except:
+                return json.dumps({"code":"0x0"})
+            else:
+                #Has to changed
+                print("convert successfull")
+
+                clean_GPIO()  
+
+                data = {'id':id}
+                r = requests.post('http://localhost/scan', json=data)
+
+                with open('temp/data.txt', 'w') as file:
+                    json.dump(data, file)
+
+                print("id printed to file")
     
 thread = threading.Thread(target=run_job)
 
 @app.before_first_request
 def active_job():
-    print("Hello")
+    global stop_threads
+    global scanning
+    stop_threads = False
+    print("Variables are global")
     thread.start()
     print("Thread started")
 
@@ -179,6 +179,8 @@ def doneFirst():
     
 @app.route('/scan', methods = ['GET', 'POST'])
 def scan():
+    global stop_threads
+    global scanning
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
         if 'back2' in request.form:
