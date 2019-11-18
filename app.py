@@ -80,6 +80,7 @@ thread = threading.Thread(target=run_job)
 def index():
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
+    thread.start()
 
     if request.method == 'POST':
         if request.form['start'] == '':
@@ -182,6 +183,7 @@ def scan():
             thread.join()
             return redirect(url_for('firstuse'))
         if 'id' in request.args:
+            stop_threads = True
             data = request.get_json()
             id = data['id']
             session['id'] = id
