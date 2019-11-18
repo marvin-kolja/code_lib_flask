@@ -44,6 +44,8 @@ def run_job():
             id = reader.read_id()
             print('Scan successfull')
             # id = "215531341298"
+            if stop_threads == True:
+                break
             id = str(id)
         except:
             return json.dumps({"code":"0x0"})
@@ -52,11 +54,13 @@ def run_job():
             print("convert successfull")
             clean_GPIO()  
             data = {'id':id}
+            r = requests.post('http://localhost/scan', json=data)
             with open('temp/data.txt', 'w') as file:
                 json.dump(data, file)
             print("id printed to file")
     
 thread = threading.Thread(target=run_job)
+
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
@@ -163,44 +167,49 @@ def scan():
             stop_threads = True
             thread.join()
             return redirect(url_for('firstuse'))
+        if 'id' in request.args:
+            data = request.get_json()
+            id = data['id']
+            session['id'] = id
+            return render_template('scan.html', id = id)
         else:
             os.system('rm temp/data.txt')
             thread.start()
-            return render_template('scan.html')
-    elif request.method == 'GET':
-        # SHOULD NOT BE ACCESABLE FOR USERS
-        session['scanning'] = True
-        os.system('rm temp/data.txt')
-        scanning = session.get('scanning')
-        print(scanning)
-        if scanning == True:
-            print("Scanner already scans")
-        else:
-            try:
-                r = requests.get('http://localhost:5000/scanner', timeout=5)
-                print(r.text)
-            except requests.exceptions.RequestException:
-                pass
-        timeout_start = time.time()
-        while True:
-            if time.time() > timeout_start + timeout:
-                return json.dumps({'code':'0x2'})
-            else:
-                try:
-                    with open('temp/data.txt') as json_file:
-                        data = json.load(json_file)
-                except:
-                    print("File is empty or reading Error")
-                else:
-                    id = data['id']
-                    os.system('rm temp/data.txt')
-                    session['id'] = id
-                    return json.dumps({"code":"0x1"})
-            print("no id")
-            sleep(1)
-            continue
-    else:
-        return 'something went wrong'
+            return render_template('scan.html', id = '000')
+    # elif request.method == 'GET':
+    #     # SHOULD NOT BE ACCESABLE FOR USERS
+    #     session['scanning'] = True
+    #     os.system('rm temp/data.txt')
+    #     scanning = session.get('scanning')
+    #     print(scanning)
+    #     if scanning == True:
+    #         print("Scanner already scans")
+    #     else:
+    #         try:
+    #             r = requests.get('http://localhost:5000/scanner', timeout=5)
+    #             print(r.text)
+    #         except requests.exceptions.RequestException:
+    #             pass
+    #     timeout_start = time.time()
+    #     while True:
+    #         if time.time() > timeout_start + timeout:
+    #             return json.dumps({'code':'0x2'})
+    #         else:
+    #             try:
+    #                 with open('temp/data.txt') as json_file:
+    #                     data = json.load(json_file)
+    #             except:
+    #                 print("File is empty or reading Error")
+    #             else:
+    #                 id = data['id']
+    #                 os.system('rm temp/data.txt')
+    #                 session['id'] = id
+    #                 return json.dumps({"code":"0x1"})
+    #         print("no id")
+    #         sleep(1)
+    #         continue
+    # else:
+    #     return 'something went wrong'
 
 @app.route('/checkData', methods = ['GET'])
 def checkData():
