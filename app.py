@@ -164,7 +164,7 @@ def scan():
             stop_threads = True
             thread.join()
             return redirect(url_for('firstuse'))
-        if 'id' in request.json:
+        if request.json['id']:
             print("worked")
             stop_threads = True
             data = request.get_json()
