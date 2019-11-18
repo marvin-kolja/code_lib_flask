@@ -33,14 +33,13 @@ def clean_GPIO():
 
 
 
-# @app.before_first_request
-# def active_job():
-#     print("Hello")
+
 def run_job():
     while True:
         if stop_threads == True:
-            print("stopping scanner")
-            break
+            print("Scanner not scanning!")
+            sleep(1)
+            continue
         try:
             print('ready to scan')
 
@@ -55,8 +54,7 @@ def run_job():
             print('Scan successfull')
             
             if stop_threads == True:
-                print("stopping scanner")
-                break
+                continue
 
             id = str(id)
         except:
@@ -77,12 +75,16 @@ def run_job():
     
 thread = threading.Thread(target=run_job)
 
+@app.before_first_request
+def active_job():
+    print("Hello")
+    thread.start()
+    print("Thread started")
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
-    thread.start()
 
     if request.method == 'POST':
         if request.form['start'] == '':
@@ -193,10 +195,6 @@ def scan():
         else:
             os.system('rm temp/data.txt')
             stop_threads = False
-            if scanning == True:
-                pass
-            else:
-                thread.start()
             return render_template('scan.html', id = '000')
     # elif request.method == 'GET':
     #     # SHOULD NOT BE ACCESABLE FOR USERS
