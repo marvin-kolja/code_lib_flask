@@ -27,7 +27,7 @@ def clean_GPIO():
 
 def requestScan(id):
     data = {'id':id}
-    r = requests.post('http://127.0.0.1:8000/scan/', json=data)
+    r = requests.post('http://127.0.0.1:5000/scan', json=data)
 
 def run_job():
     global stop_threads
@@ -94,31 +94,6 @@ def index():
     else:
         return render_template('index.html', date = x)
 
-# @app.route('/scanner')
-# def scanner():
-#     session['scanning'] = True
-#     while True:
-#         try:
-#             print('ready to scan')
-#             reader = SimpleMFRC522()
-#             print('scanner initialized')
-#             id = reader.read_id()
-#             print('Scan successfull')
-#             # id = "215531341298"
-#             session.pop('scanning')
-#             id = str(id)
-#         except:
-#             print("Scan Error")
-#             return json.dumps({"code":"0x0"})
-#         else:
-#             #Has to changed
-#             print("convert successfull")
-#             clean_GPIO()
-#             print('Session successfull')    
-#             data = {'id':id}
-#             with open('temp/data.txt', 'w') as file:
-#                 json.dump(data, file)
-#             return 'worked'
 
 @app.route('/chooselogin', methods = ['POST', 'GET'])
 def chooselogin():
