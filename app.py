@@ -25,8 +25,7 @@ def clean_GPIO():
     GPIO.cleanup()
     print("GPIO has been cleaned up...")
 
-def requestScan(id):
-    data = {'id':id}
+def requestScan(data):
     r = requests.post('http://127.0.0.1:5000/scan', json=data)
 
 def run_job():
@@ -63,7 +62,9 @@ def run_job():
 
                 clean_GPIO()  
 
-                requestScan(id)
+                data = {'id':id}
+                
+                requestScan(data)
 
                 with open('temp/data.txt', 'w') as file:
                     json.dump(data, file)
