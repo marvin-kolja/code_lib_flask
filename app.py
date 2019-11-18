@@ -23,6 +23,9 @@ timeout = 30
 global stop_threads
 stop_threads = True
 
+global scanning
+scanning = False
+
 def clean_GPIO():
     print("\n\nProgramm has been terminated...")
     GPIO.cleanup()
@@ -39,24 +42,35 @@ def run_job():
             break
         try:
             print('ready to scan')
+
             reader = SimpleMFRC522()
+
             print('scanner initialized')
+
+            scanning = True
             id = reader.read_id()
+            scanning = False
+
             print('Scan successfull')
-            # id = "215531341298"
+            
             if stop_threads == True:
                 break
+
             id = str(id)
         except:
             return json.dumps({"code":"0x0"})
         else:
             #Has to changed
             print("convert successfull")
+
             clean_GPIO()  
+
             data = {'id':id}
             r = requests.post('http://localhost/scan', json=data)
+
             with open('temp/data.txt', 'w') as file:
                 json.dump(data, file)
+
             print("id printed to file")
     
 thread = threading.Thread(target=run_job)
@@ -174,7 +188,10 @@ def scan():
             return render_template('scan.html', id = id)
         else:
             os.system('rm temp/data.txt')
-            thread.start()
+            if scanning == True:
+                pass
+            else:
+                thread.start()
             return render_template('scan.html', id = '000')
     # elif request.method == 'GET':
     #     # SHOULD NOT BE ACCESABLE FOR USERS
