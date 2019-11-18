@@ -39,6 +39,7 @@ def clean_GPIO():
 def run_job():
     while True:
         if stop_threads == True:
+            print("stopping scanner")
             break
         try:
             print('ready to scan')
@@ -54,6 +55,7 @@ def run_job():
             print('Scan successfull')
             
             if stop_threads == True:
+                print("stopping scanner")
                 break
 
             id = str(id)
@@ -190,6 +192,7 @@ def scan():
             return render_template('scan.html', id = id)
         else:
             os.system('rm temp/data.txt')
+            stop_threads = False
             if scanning == True:
                 pass
             else:
