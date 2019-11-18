@@ -63,7 +63,7 @@ def run_job():
                 clean_GPIO()  
 
                 data = {'id':id}
-                r = requests.post('http://localhost/scan', json=data)
+                r = requests.post('http://localhost:8000/scan', json=data)
 
                 with open('temp/data.txt', 'w') as file:
                     json.dump(data, file)
