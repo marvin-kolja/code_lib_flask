@@ -63,7 +63,7 @@ def run_job():
                 clean_GPIO()  
 
                 data = {'id':id}
-                r = requests.post('http://localhost:8000/scan', json=data)
+                r = requests.post('http://127.0.0.1:8000/scan', json=data)
 
                 with open('temp/data.txt', 'w') as file:
                     json.dump(data, file)
@@ -76,7 +76,7 @@ thread = threading.Thread(target=run_job)
 def active_job():
     global stop_threads
     global scanning
-    stop_threads = False
+    stop_threads = True
     print("Variables are global")
     thread.start()
     print("Thread started")
