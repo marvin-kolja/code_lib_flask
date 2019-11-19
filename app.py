@@ -181,6 +181,8 @@ def getID():
                 data = json.load(json_file)
         except:
             print("File is empty or reading Error")
+            print("sleeping for 2 seconds")
+            sleep(2)
         else:
             if 'code' in data:
                 if data['code'] == '0x0':

@@ -20,15 +20,15 @@ class Reader():
 
     def read(self):
         try:
-            print("sleeping")
-            time.sleep(20)
+            print("sleeping for 2 seconds")
+            time.sleep(2)
             print('ready to scan')
 
             self.reader
 
             print('scanner initialized')
 
-            id = self.reader.read_id()
+            id = str(self.reader.read_id())
 
             print('Scan successfull')
 
