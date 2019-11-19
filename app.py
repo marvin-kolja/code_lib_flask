@@ -15,8 +15,6 @@ from reader import Reader
 
 app = Flask(__name__)
 
-reader = Reader()
-
 timeout = 30
 
 
@@ -29,6 +27,7 @@ def w_temp(data):
 def run_job():
     global stop_writing_id
     while True:
+        reader = Reader()
         returned = reader.read()
         if returned == '0x0':
             data = {"code": returned}
@@ -201,6 +200,8 @@ def getID():
 @app.route('/checkData', methods = ['GET'])
 def checkData():
     if 'id' in session:
+        print(session['id'])
+        print(type(session['id']))
         id = int(session['id'])
         try:
             op = Operations()
