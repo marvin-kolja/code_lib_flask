@@ -9,81 +9,52 @@ import random
 import requests
 import json
 from sqlite.operation_functions import Operations
-import RPi.GPIO as GPIO
-from mfrc522 import SimpleMFRC522
 import time
+from reader import Reader
 
 
 app = Flask(__name__)
 
-
+reader = Reader()
 
 timeout = 30
 
-def clean_GPIO():
-    print("\n\nProgramm has been terminated...")
-    GPIO.cleanup()
-    print("GPIO has been cleaned up...")
 
-def requestScan(data):
-    r = requests.post('http://192.168.0.27:5000/scan', json=data)
+def w_temp(data):
+    with open('temp/data.txt', 'w') as file:
+        json.dump(data, file)
+    print("id printed to file")
+
 
 def run_job():
-    global stop_threads
-    global scanning
+    global stop_writing_id
     while True:
-        if stop_threads == True:
-            print("Scanner not scanning!")
-            sleep(2)
+        returned = reader.read()
+        if returned == '0x0':
+            data = {"code": returned}
+            print("Scanner error!")
+            w_temp(data)
             continue
-        else:
-            try:
-                print('ready to scan')
-
-                reader = SimpleMFRC522()
-
-                print('scanner initialized')
-
-                scanning = True
-                id = reader.read_id()
-                scanning = False
-
-                print('Scan successfull')
-                
-                if stop_threads == True:
-                    continue
-
-                id = str(id)
-            except:
-                return json.dumps({"code":"0x0"})
-            else:
-                #Has to changed
-                print("convert successfull")
-
-                clean_GPIO()  
-
-                data = {'id':id}
-
-                requestScan(data)
-
-                with open('temp/data.txt', 'w') as file:
-                    json.dump(data, file)
-
-                print("id printed to file")
+        else: 
+            data = {"id": returned}
+            if stop_writing_id == False:
+                w_temp(data)
     
 thread = threading.Thread(target=run_job)
 
 @app.before_first_request
 def active_job():
-    global stop_threads
-    global scanning
-    stop_threads = True
+    global stop_writing_id
+    stop_writing_id = True
     print("Variables are global")
     thread.start()
     print("Thread started")
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
+    global stop_writing_id
+    stop_writing_id = True
+    
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
 
@@ -101,16 +72,15 @@ def chooselogin():
     if request.method == 'POST':
         if request.form['button'] == 'Log in':
             return redirect(url_for('login'))
-        elif request.form['button'] == 'First use':
-            return redirect(url_for('firstuse'))
+        elif request.form['button'] == 'Sign up':
+            return redirect(url_for('signup'))
         else:
             return render_template('choose.html')
-
     else:
         return render_template('choose.html')
 
-@app.route('/first', methods = ['POST', 'GET'])
-def firstuse():
+@app.route('/sign-up', methods = ['POST', 'GET'])
+def signup():
     if request.method == 'POST':
         if 'back' in request.form:
             return redirect(url_for('chooselogin'))
@@ -118,21 +88,22 @@ def firstuse():
             """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
             return redirect(url_for('scan'))
         else:
-            return render_template('firstuse.html')
+            return render_template('signup.html')
     else:
-        return render_template('firstuse.html')        
+        return render_template('signup.html')        
 
 
-@app.route('/first/form')
-def cardrecognized():
+@app.route('/signup/form')
+def signupForm():
+    global stop_writing_id
+    stop_writing_id = True
     # Needs input
-    
     id = session['id']
     return render_template('email.html', id=id)
 
 
-@app.route('/first/confirm', methods = ['POST', 'GET'])
-def emailconfirm():
+@app.route('/signup/confirm', methods = ['POST', 'GET'])
+def signupConfirm():
     # Has to talk to the e-mail confirmation...
     # For the MVP just talk to database
     if request.method == 'POST':
@@ -148,32 +119,23 @@ def emailconfirm():
     else:
         return "doesn't work"
 
-@app.route('/fu-done ')
-def doneFirst():
+@app.route('/signup/done ')
+def signupDone():
     # Needs name of user
     pass
     
 @app.route('/scan', methods = ['GET', 'POST'])
 def scan():
-    global stop_threads
-    global scanning
+    global stop_writing_id
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
         if 'back2' in request.form:
             os.system('rm temp/data.txt')
-            stop_threads = True
-            thread.join()
-            return redirect(url_for('firstuse'))
-        if request.is_json:
-            print("worked")
-            stop_threads = True
-            data = request.get_json()
-            id = data['id']
-            session['id'] = id
-            return render_template('scan.html', id = id)
+            stop_writing_id = True
+            return redirect(url_for('signup'))
         else:
             os.system('rm temp/data.txt')
-            stop_threads = False
+            stop_writing_id = False
             return render_template('scan.html', id = '000')
     # elif request.method == 'GET':
     #     # SHOULD NOT BE ACCESABLE FOR USERS
@@ -209,6 +171,26 @@ def scan():
     #         continue
     # else:
     #     return 'something went wrong'
+
+@app.route('/getid', methods = ['GET'])
+def getID():
+    while True:
+        global stop_writing_id
+        try:
+            with open('temp/data.txt') as json_file:
+                data = json.load(json_file)
+        except:
+            print("File is empty or reading Error")
+        else:
+            if data['code'] == '0x0':
+                os.system('rm temp/data.txt')
+                stop_writing_id == True
+                return json.dumps({"code":"0x0"})
+            id = data['id']
+            os.system('rm temp/data.txt')
+            session['id'] = id
+            stop_writing_id == True
+            return json.dumps({"code":"0x1"})
 
 @app.route('/checkData', methods = ['GET'])
 def checkData():
@@ -249,15 +231,9 @@ def checkData():
         # finally:
         #     return render_template('index.html', msg = msg)
         #     conn.close()
-        
-    elif 'id_l' in session:
-        # for login
-        pass
-    elif 'id_b' in session:
-        # for scanning books
-        pass
     else:
-        print('Something went wrong')
+        print('No id in session')
+        return json.dumps({'code': '1x3'})
 
 
 

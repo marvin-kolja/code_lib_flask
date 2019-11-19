@@ -24,57 +24,47 @@
 </form>
 
 <script>
-function checkID () {
-    if ('{{ id }}' == '000') {
-        // pass
-    } else {
-        loadCheck()
-    } 
-}
-// function loadScanner() {
-//     var xhttp = new XMLHttpRequest();
+function loadScanner() {
+    var xhttp = new XMLHttpRequest();
 
-//     xhttp.addEventListener("abort", transferCanceled);
+    xhttp.addEventListener("abort", transferCanceled);
 
-//     xhttp.open("GET", "/scan", true);
+    xhttp.open("GET", "/getid", true);
 
-//     xhttp.responseType = 'json';
+    xhttp.responseType = 'json';
 
-//     xhttp.onreadystatechange = function() {
-//         if (this.readyState == 4 && this.status == 200) {
-//             var responseObj = xhttp.response;
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var responseObj = xhttp.response;
 
-//             if (responseObj.code == '0x1') {
-//                 // alert scan succesfull
-//                 alert("Card was succesfully scanned!")
-//                 loadCheck()
-//             }
-//             if (responseObj.code == '0x0') {
-//                 // alert scanner error
-//                 alert("Something went wrong with the scanner! Try again...")
-//                 // Should report it to library team
-//                 loadScanner()
-//             }
-//             if (responseObj.code == '0x2') {
-//                 alert("Timeout...")
-//                 abortFunction()
-//             }
+            if (responseObj.code == '0x1') {
+                // alert scan succesfull
+                alert("Card was succesfully scanned!")
+                loadCheck()
+            }
+            if (responseObj.code == '0x0') {
+                // alert scanner error
+                alert("Something went wrong with the scanner! Try again...")
+                // Should report it to library team
+                loadScanner()
+            }
+            // if (responseObj.code == '0x2') {
+            //     alert("Timeout...")
+            //     abortFunction()
+            // }
 
-//         }
-//     };
-//     // xhttp.onload = function() {
+        }
+    };
+    function transferCanceled(evt) {
+        alert("The transfer has been canceled by the user.");
+    }
+    xhttp.send();
 
-//     // };
-//     function transferCanceled(evt) {
-//         alert("The transfer has been canceled by the user.");
-//     }
-//     xhttp.send();
-
-//     function abortFunction() {
-//         xhttp.abort()
-//     }
+    function abortFunction() {
+        xhttp.abort()
+    }
     
-// }
+}
 function loadCheck() {
     var xhttp = new XMLHttpRequest();
 
@@ -97,7 +87,11 @@ function loadCheck() {
                 
             }
             if (responseObj.code == '1x2') {
-                window.location = "/first/form";
+                window.location = "/signup/form";
+            }
+            if (responseObj.code == '1x2') {
+                alert("There is no ID found...Something crucial went wrong! Please find help at the Library Team")
+                window.location = "/";
             }
         }
     };
@@ -113,5 +107,6 @@ function loadCheck() {
         xhttp.abort()
     }
 }
+loadScanner()
 </script>
 {% endblock %}
