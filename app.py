@@ -1,15 +1,27 @@
 from flask import Flask, render_template, redirect, url_for, request, session
+
 import threading
+
 from datetime import datetime
+
 import sqlite3
+
 from time import sleep
+
 import os
+
 import sys
+
 import random
+
 import requests
+
 import json
+
 from sqlite.operation_functions import Operations
+
 import time
+
 from reader import Reader
 
 
@@ -204,6 +216,7 @@ def checkData():
         print(session['id'])
         print(type(session['id']))
         id = int(session['id'])
+        sleep(5)
         try:
             op = Operations()
             print('Database connected')
