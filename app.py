@@ -148,7 +148,7 @@ def scan():
         else:
             os.system('rm temp/data.txt')
             stop_writing_id = False
-            return render_template('scan.html', id = '000')
+            return render_template('scan.html')
     # elif request.method == 'GET':
     #     # SHOULD NOT BE ACCESABLE FOR USERS
     #     session['scanning'] = True
@@ -188,6 +188,8 @@ def scan():
 def getID():
     while True:
         global stop_writing_id
+        if stop_writing_id == True:
+            return None
         try:
             with open('temp/data.txt') as json_file:
                 data = json.load(json_file)
