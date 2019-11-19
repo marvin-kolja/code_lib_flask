@@ -143,6 +143,7 @@ def scan():
         if 'back2' in request.form:
             os.system('rm temp/data.txt')
             stop_writing_id = True
+            sleep(2)
             return redirect(url_for('signup'))
         else:
             os.system('rm temp/data.txt')
