@@ -140,10 +140,10 @@ def scan():
     global stop_writing_id
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
-        if 'back2' in request.form:
+        if 'back' in request.form:
             os.system('rm temp/data.txt')
             stop_writing_id = True
-            sleep(2)
+            sleep(1)
             return redirect(url_for('signup'))
         else:
             os.system('rm temp/data.txt')
@@ -195,8 +195,8 @@ def getID():
                 data = json.load(json_file)
         except:
             print("File is empty or reading Error")
-            print("sleeping for 2 seconds")
-            sleep(2)
+            print("sleeping for 0.5 seconds")
+            sleep(0.5)
         else:
             if 'code' in data:
                 if data['code'] == '0x0':
@@ -219,7 +219,8 @@ def checkData():
         print(session['id'])
         print(type(session['id']))
         id = int(session['id'])
-        sleep(5)
+        print("sleeping for 0.5 seconds")
+        sleep(0.5)
         try:
             op = Operations()
             print('Database connected')
