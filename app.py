@@ -90,7 +90,7 @@ def chooselogin():
     else:
         return render_template('choose.html')
 
-@app.route('/sign-up', methods = ['POST', 'GET'])
+@app.route('/signup', methods = ['POST', 'GET'])
 def signup():
     if request.method == 'POST':
         if 'back' in request.form:
