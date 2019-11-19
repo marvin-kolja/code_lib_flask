@@ -191,7 +191,8 @@ def getID():
                 print("Another error occured")
                 print(data['code'])
                 return None
-            id = data['id']
+            data_get = data['id']
+            id = data_get['id']
             os.system('rm temp/data.txt')
             session['id'] = id
             stop_writing_id == True
