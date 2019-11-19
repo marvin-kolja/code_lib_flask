@@ -182,10 +182,14 @@ def getID():
         except:
             print("File is empty or reading Error")
         else:
-            if data['code'] == '0x0':
-                os.system('rm temp/data.txt')
-                stop_writing_id == True
-                return json.dumps({"code":"0x0"})
+            if 'code' in data:
+                if data['code'] == '0x0':
+                    os.system('rm temp/data.txt')
+                    stop_writing_id == True
+                    return json.dumps({"code":"0x0"})
+                print("Another error occured")
+                print(data['code'])
+                return None
             id = data['id']
             os.system('rm temp/data.txt')
             session['id'] = id
