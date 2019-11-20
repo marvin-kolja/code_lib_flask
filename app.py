@@ -35,7 +35,7 @@ def run_job():
             w_temp(data)
             continue
         else: 
-            data = {"id": returned}
+            data = returned
             if stop_writing_id == False:
                 w_temp(data)
     
@@ -191,8 +191,7 @@ def getID():
                 print("Another error occured")
                 print(data['code'])
                 return None
-            data_get = data['id']
-            id = data_get['id']
+            id = data['id']
             os.system('rm temp/data.txt')
             session['id'] = id
             stop_writing_id == True
