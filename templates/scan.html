@@ -2,9 +2,6 @@
 
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/scan.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 {% endblock %}
 
 {% block head %}
@@ -17,7 +14,11 @@
 <p></p>
 <p>The system will give you feedback if the card is working.</p>
 
-<div id="alert"></div>
+<div id="alert">
+    <div class="box box-scanner-info">
+        <strong>Ready!</strong> The Scanner is ready for scanning a Card.
+    </div>
+</div>
 
 <form action = "/scan" method = "post">
     <p id="back"><input onclick="abortFunction()" type = "submit" name = "back" value = "Back"/></p>
@@ -28,8 +29,8 @@ const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-var alertError = ''
-var alertSuccess = '<div class="alert alert-success alert-dismissible fade in"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>Success!</strong> This alert box could indicate a successful or positive action.</div>'
+var alertError = '<div class="box box-scanner-failed"><strong>Failed!</strong> The scanning failed! Please report it to the Team. </div>'
+var alertSuccess = '<div class="box box-scanner-success"><strong>Success!</strong> You Card was recognized. Hang on second. </div>'
 var alertInfo =  ''
 
 function loadScanner() {
