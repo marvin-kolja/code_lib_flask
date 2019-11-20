@@ -1,15 +1,27 @@
 from flask import Flask, render_template, redirect, url_for, request, session
+
 import threading
+
 from datetime import datetime
+
 import sqlite3
+
 from time import sleep
+
 import os
+
 import sys
+
 import random
+
 import requests
+
 import json
+
 from sqlite.operation_functions import Operations
+
 import time
+
 from reader import Reader
 
 
@@ -78,7 +90,7 @@ def chooselogin():
     else:
         return render_template('choose.html')
 
-@app.route('/sign-up', methods = ['POST', 'GET'])
+@app.route('/signup', methods = ['POST', 'GET'])
 def signup():
     if request.method == 'POST':
         if 'back' in request.form:
@@ -128,14 +140,15 @@ def scan():
     global stop_writing_id
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
-        if 'back2' in request.form:
+        if 'back' in request.form:
             os.system('rm temp/data.txt')
             stop_writing_id = True
+            sleep(1)
             return redirect(url_for('signup'))
         else:
             os.system('rm temp/data.txt')
             stop_writing_id = False
-            return render_template('scan.html', id = '000')
+            return render_template('scan.html')
     # elif request.method == 'GET':
     #     # SHOULD NOT BE ACCESABLE FOR USERS
     #     session['scanning'] = True
@@ -175,13 +188,15 @@ def scan():
 def getID():
     while True:
         global stop_writing_id
+        if stop_writing_id == True:
+            return None
         try:
             with open('temp/data.txt') as json_file:
                 data = json.load(json_file)
         except:
             print("File is empty or reading Error")
-            print("sleeping for 2 seconds")
-            sleep(2)
+            print("sleeping for 0.5 seconds")
+            sleep(0.5)
         else:
             if 'code' in data:
                 if data['code'] == '0x0':
@@ -203,6 +218,8 @@ def checkData():
         print(session['id'])
         print(type(session['id']))
         id = int(session['id'])
+        print("sleeping for 0.5 seconds")
+        sleep(0.5)
         try:
             op = Operations()
             print('Database connected')
