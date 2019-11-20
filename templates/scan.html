@@ -2,6 +2,10 @@
 
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/scan.css') }}">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 {% endblock %}
 
 {% block head %}
@@ -9,21 +13,26 @@
 {% endblock %}
 
 {% block body %}
-<!-- <form action = "/" method = "post">
-    <button class="invisibleBox" type = "submit" name = "start" value = ""></button>
-</form> -->
-
 <h2>Scan a Card</h2>
 <p>Scan your choosen Card.</p>
 <p></p>
 <p>The system will give you feedback if the card is working.</p>
-<p id="demo"></p>
+
+<div id="alert"></div>
 
 <form action = "/scan" method = "post">
     <p id="back"><input onclick="abortFunction()" type = "submit" name = "back" value = "Back"/></p>
 </form>
 
 <script>
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+var alertError = ''
+var alertSuccess = '<div class="alert alert-success alert-dismissible fade in"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>Success!</strong> This alert box could indicate a successful or positive action.</div>'
+var alertInfo =  ''
+
 function loadScanner() {
     var xhttp = new XMLHttpRequest();
 
@@ -41,7 +50,8 @@ function loadScanner() {
 
             if (responseObj.code == '0x1') {
                 // alert scan succesfull
-                alert("Card was succesfully scanned!")
+                document.getElementById("back").innerHTML = alertSuccess
+                sleep(1000)
                 loadCheck()
             }
             if (responseObj.code == '0x0') {
