@@ -38,15 +38,15 @@ input[type=submit]:hover {
     background-color: #dfdfdf;
 }
 
-input[name = back], input[name = back2] {
+input[name = back] {
     position: absolute;
     bottom: 10%;
     left: 5%;
     width: 10%;
-    background-color: var(--main-font-color);
+    background-color: #ffffff;
 }
 
-input[name = back], input[name = back2] :hover {
+input[name = back] :hover {
     background-color: #dfdfdf;
 }
 
