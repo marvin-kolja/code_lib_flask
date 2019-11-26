@@ -36,6 +36,7 @@ def w_temp(data):
     print("id printed to file")
 
 
+
 def run_job():
     global stop_writing_id
     while True:
@@ -145,10 +146,10 @@ def scan():
             stop_writing_id = True
             sleep(1)
             return redirect(url_for('signup'))
-        else:
-            os.system('rm temp/data.txt')
-            stop_writing_id = False
-            return render_template('scan.html')
+    else:
+        os.system('rm temp/data.txt')
+        stop_writing_id = False
+        return render_template('scan.html')
     # elif request.method == 'GET':
     #     # SHOULD NOT BE ACCESABLE FOR USERS
     #     session['scanning'] = True

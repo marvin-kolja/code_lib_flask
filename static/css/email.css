@@ -1,0 +1,45 @@
+:root {
+    --main-bg-color: #131313;
+    --main-font-color : #ffffff;
+}
+
+
+.emailform {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    left: 50%;
+    margin-left: -25%;
+    margin-top: 5%;
+
+}
+
+.emailform input[type=submit] {
+    position: absolute;
+    left: 50%;
+    margin-left: -10%;
+
+    width: 20%;
+    height: 10%;
+    font-size: 18px;
+  }
+
+.emailform input[type=text] {
+    margin-left: 35%;
+    width: 30%;
+    font-size: 18px;
+    color: var(--main-font-color);
+    background-color: #ffffff10;
+
+    padding: 5px 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+
+}
+
+#email {
+    font-size: 18px;
+    text-align: center;
+}

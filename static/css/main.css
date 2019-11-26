@@ -1,13 +1,19 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400&display=swap');
+
 :root {
     --main-bg-color: #131313;
     --main-font-color : #ffffff;
 }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
     color: var(--main-font-color);
     background-color: var(--main-bg-color);
-    padding: 5%;
+    padding-left: 5%;
+    padding-bottom: 1%;
+    padding-right: 5%;
+    padding-top: 1%;
 }
 
 h1 {
@@ -20,6 +26,11 @@ h2 {
 
 p {
     font-size: 24px;
+}
+
+input {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
 }
 
 input[type=submit] {
@@ -38,15 +49,15 @@ input[type=submit]:hover {
     background-color: #dfdfdf;
 }
 
-input[name = back], input[name = back2] {
+input[name = back] {
     position: absolute;
     bottom: 10%;
     left: 5%;
     width: 10%;
-    background-color: var(--main-font-color);
+    background-color: #ffffff;
 }
 
-input[name = back], input[name = back2] :hover {
+input[name = back] :hover {
     background-color: #dfdfdf;
 }
 
