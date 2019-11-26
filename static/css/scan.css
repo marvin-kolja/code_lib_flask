@@ -1,0 +1,18 @@
+.box{
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.box.box-scanner-info {
+   background-color:#31708f;
+   border-color:#bce8f1;
+}
+.box.box-scanner-success {
+   background-color: #3c763d;
+   border-color: #d6e9c6;
+}
+.box.box-scanner-failed {
+   background-color: #a94442;
+   border-color: #ebccd1;
+}
