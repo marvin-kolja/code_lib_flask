@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response
 
 import threading
 
@@ -19,6 +19,7 @@ import requests
 import json
 
 from sqlite.operation_functions import Operations
+from sqlite.users import User
 
 import time
 
@@ -26,6 +27,7 @@ from reader import Reader
 
 
 app = Flask(__name__)
+
 
 timeout = 30
 
@@ -110,26 +112,50 @@ def signupForm():
     global stop_writing_id
     stop_writing_id = True
     # Needs input
-    id = session['id']
-    return render_template('email.html', id=id)
+    if request.args.get("err"):
+        err = request.args.get("err")
+        email = request.args.get("email")
+        return render_template('email.html', err=err, email=email)
+    else:
+        return render_template('email.html')
 
+@app.route('/signup/email-confirm', methods = ['POST', 'GET'])
+def signupEmailConfirm():
+    # send email
+    # loop through database if data has changed
 
-@app.route('/signup/confirm', methods = ['POST', 'GET'])
-def signupConfirm():
-    # Has to talk to the e-mail confirmation...
     # For the MVP just talk to database
+
+    # check Database for confirmation
     if request.method == 'POST':
         first_name = request.form['first'].lower()
         last_name = request.form['last'].lower()
         email = (first_name + '.' + last_name + "@code.berlin")
-        # Put inside database
-
-        # Delete session
-        session.pop('id', None)
-        print('Session with the key id got cleaned up')
-        return email
+        # input user
+        user = User(first_name, last_name, None)
+        # id
+        id = session['id']
+        # check user
+        op = Operations()
+        connectId = op.connect_ID_with_user(user, id)
+        if connectId:
+            # Delete session
+            session.pop('id', None)
+            print('Session with the key id got cleaned up')
+            return redirect(url_for("signupConfirm"))
+        else:
+            return redirect(url_for("signupForm", err="err1", email=email))
     else:
-        return "doesn't work"
+        return "Something went wrong"
+    # return redirect(url_for('signupConfirm'))
+    return "Something went wrong"
+
+
+@app.route('/signup/confirm', methods = ['POST', 'GET'])
+def signupConfirm():
+    return 'Well done. Card is connected'
+    # Has to talk to the e-mail confirmation...
+
 
 @app.route('/signup/done ')
 def signupDone():

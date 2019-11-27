@@ -92,3 +92,8 @@ input[name = next]:hover {
    background-color: #a94442;
    border-color: #ebccd1;
 }
+
+.box.box-scanner-database {
+    background-color: #683f11;
+    border-color: #ebdacc;
+ }
