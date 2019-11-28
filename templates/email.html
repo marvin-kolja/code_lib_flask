@@ -13,18 +13,19 @@
 <h1>Card recognized!</h1>
 <p>Now, that the system recognized your card, I need your name. </p>
 <div id = "keyuptrigger" class = "emailform">
-    <form action = "/signup/confirm" method = "post">
+    <form action = "/signup/email-confirm" method = "post" autocomplete="off">
         <p><input type = "text" name = "first" placeholder = "First Name"/></p>
         <p><input type = "text" name = "last" placeholder = "Last Name"/></p>
-        <p id="email"></p>
+        <p id="email" class="{{err}}">{{ email }}</p>
         <p><input type = "submit" value = "submit" /></p>
     </form>
 </div>
 
-<script> 
+<script>
 $("#keyuptrigger").keyup(function() {
-    var first = $('[name=first]').val();  
-    var last = $('[name=last]').val();  
+    var first = $('[name=first]').val().toLowerCase();  
+    var last = $('[name=last]').val().toLowerCase();
+    $('#email').removeClass("err1")
     $('#email').html(first + "." + last + "@code.berlin"); 
 })
 </script>

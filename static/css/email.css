@@ -43,3 +43,7 @@
     font-size: 18px;
     text-align: center;
 }
+
+.err1 {
+    color: red !important;
+}

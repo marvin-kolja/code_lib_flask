@@ -41,6 +41,7 @@ class Operations:
             self.c.execute("""UPDATE users SET userRfid = :id
                         WHERE userId = :userId""",
                     {"userId": userId, 'id': id})
+        return True
             
 
 
@@ -56,6 +57,7 @@ class Operations:
         if check != []:
             if len(check) != 1:
                 print("There are more than one user with this name....")
+                return False
             else:
                 return check[0][0]
         else:
@@ -78,3 +80,13 @@ class Operations:
             return check[0][0]
         else:
             False
+
+    
+    def connect_ID_with_user(self, user, id):
+        userId = self.check_user_exist_name(user)
+        if userId:
+            update = self.update_id(userId, id)
+            return update
+        else:
+            return False
+
