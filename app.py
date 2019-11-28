@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response
+from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
 
 import threading
 
@@ -45,14 +45,19 @@ def run_job():
         reader = Reader()
         returned = reader.read()
         if returned == '0x0':
-            data = {"code": returned}
+            g.id = returned
             print("Scanner error!")
-            w_temp(data)
+
+            # data = {"code": returned}
+            # print("Scanner error!")
+            # w_temp(data)
             continue
         else: 
-            data = returned
             if stop_writing_id == False:
-                w_temp(data)
+                g.id = returned
+            # data = returned
+            # if stop_writing_id == False:
+            #     w_temp(data)
     
 thread = threading.Thread(target=run_job)
 
@@ -119,10 +124,9 @@ def signupForm():
     else:
         return render_template('email.html')
 
-@app.route('/signup/email-confirm', methods = ['POST', 'GET'])
-def signupEmailConfirm():
+@app.route('/signup/email-send', methods = ['POST', 'GET'])
+def signupEmailSend():
     # send email
-    # loop through database if data has changed
 
     # For the MVP just talk to database
 
@@ -153,8 +157,7 @@ def signupEmailConfirm():
 
 @app.route('/signup/confirm', methods = ['POST', 'GET'])
 def signupConfirm():
-    return 'Well done. Card is connected'
-    # Has to talk to the e-mail confirmation...
+    return render_template('confirm.html')
 
 
 @app.route('/signup/done ')
@@ -168,12 +171,14 @@ def scan():
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
         if 'back' in request.form:
-            os.system('rm temp/data.txt')
+            del g.id
+            # os.system('rm temp/data.txt')
             stop_writing_id = True
             sleep(1)
             return redirect(url_for('signup'))
     else:
-        os.system('rm temp/data.txt')
+        del g.id
+        # os.system('rm temp/data.txt')
         stop_writing_id = False
         return render_template('scan.html')
     # elif request.method == 'GET':
@@ -218,23 +223,31 @@ def getID():
         if stop_writing_id == True:
             return None
         try:
-            with open('temp/data.txt') as json_file:
-                data = json.load(json_file)
+            id = g.id._get_current_object()
+            # with open('temp/data.txt') as json_file:
+            #     data = json.load(json_file)
         except:
             print("File is empty or reading Error")
             print("sleeping for 0.5 seconds")
             sleep(0.5)
         else:
-            if 'code' in data:
-                if data['code'] == '0x0':
-                    os.system('rm temp/data.txt')
-                    stop_writing_id == True
-                    return json.dumps({"code":"0x0"})
+            del g.id
+            if '0x0' in id:
+                stop_writing_id == True
+                return json.dumps({"code":"0x0"})
+            elif None or False in id:
                 print("Another error occured")
                 print(data['code'])
                 return None
-            id = data['id']
-            os.system('rm temp/data.txt')
+                # if data['code'] == '0x0':
+                #     os.system('rm temp/data.txt')
+                #     stop_writing_id == True
+                #     return json.dumps({"code":"0x0"})
+                # print("Another error occured")
+                # print(data['code'])
+                # return None
+            # id = data['id']
+            # os.system('rm temp/data.txt')
             session['id'] = id
             stop_writing_id == True
             return json.dumps({"code":"0x1"})
