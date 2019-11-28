@@ -177,7 +177,8 @@ def scan():
             sleep(1)
             return redirect(url_for('signup'))
     else:
-        del g.id
+        if g.id:
+            del g.id
         # os.system('rm temp/data.txt')
         stop_writing_id = False
         return render_template('scan.html')
