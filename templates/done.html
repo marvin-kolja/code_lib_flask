@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/center-div.css') }}">
+{% endblock %}
+
+{% block head %}
+<title>Scan Card</title>
+{% endblock %}
+
+{% block body %}
+<div>
+    <h2>Well Done, {{userFirst}}.</h2>
+    <p>You are now able to log in to the system.</p>
+    <p>Just use your connected Card.</p>
+</div>
+
+<script>
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+setTimeout(function(){ window.location = "/"; }, 5000);
+</script>
+{% endblock %}

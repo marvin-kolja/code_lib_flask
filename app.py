@@ -45,19 +45,14 @@ def run_job():
         reader = Reader()
         returned = reader.read()
         if returned == '0x0':
-            g.id = returned
+            data = {"code": returned}
             print("Scanner error!")
-
-            # data = {"code": returned}
-            # print("Scanner error!")
-            # w_temp(data)
+            w_temp(data)
             continue
         else: 
+            data = returned
             if stop_writing_id == False:
-                g.id = returned
-            # data = returned
-            # if stop_writing_id == False:
-            #     w_temp(data)
+                w_temp(data)
     
 thread = threading.Thread(target=run_job)
 
@@ -127,25 +122,19 @@ def signupForm():
 @app.route('/signup/email-send', methods = ['POST', 'GET'])
 def signupEmailSend():
     # send email
-
-    # For the MVP just talk to database
-
-    # check Database for confirmation
+    # For the MVP just return redirect to confirm
     if request.method == 'POST':
         first_name = request.form['first'].lower()
         last_name = request.form['last'].lower()
         email = (first_name + '.' + last_name + "@code.berlin")
-        # input user
+
         user = User(first_name, last_name, None)
-        # id
-        id = session['id']
-        # check user
+
         op = Operations()
-        connectId = op.connect_ID_with_user(user, id)
-        if connectId:
-            # Delete session
-            session.pop('id', None)
-            print('Session with the key id got cleaned up')
+        if op.check_user_exist_name(user):
+            session['userFirst'] = first_name
+            session['userLast'] = last_name
+            session['userId'] = op.check_user_exist_name(user)
             return redirect(url_for("signupConfirm"))
         else:
             return redirect(url_for("signupForm", err="err1", email=email))
@@ -157,13 +146,50 @@ def signupEmailSend():
 
 @app.route('/signup/confirm', methods = ['POST', 'GET'])
 def signupConfirm():
-    return render_template('confirm.html')
+    # screen: Waiting for confirmation...
+    return render_template('confirm.html', userId = session['userId'], first = session['userFirst'], last = session['userLast'])
 
+@app.route('/signup/checkconfirm', methods = ['GET'])
+def checkConfirm():
+    # check Database for confirmation
+    op = Operations()
+    while True:
+        # check if user is confirmed (database)
+        if op.check_confirm_with_userId(session['userId']) == 1:
+            # input user
+            user = User(session['userFirst'], session['userLast'], None)
+            # id
+            id = session['id']
+            # check user
+            connectId = op.connect_ID_with_user(user, id)
+            if connectId:
+                # Delete session
+                session.pop('id', None)
+                print('Session with the key id got cleaned up')
+                return redirect(url_for("signupDone"))
+        else:
+            print('not confirmed yet')
+        sleep(3)
 
-@app.route('/signup/done ')
+@app.route('/confirmlink')
+def confirm():
+    # has to be changed with email etc
+    # session has to different aswell (userId inside the link)
+    op = Operations()
+    op.confirm_with_userId(session['userId'])
+    return 'Confirmed'
+
+@app.route('/signup/done')
 def signupDone():
-    # Needs name of user
-    pass
+    userFirst = (session['userFirst']).capitalize() 
+    op = Operations()
+    if op.reset_confirm_with_userId(session['userId']):
+        print("userConfirm has been reset")
+    session.pop('userId', None)
+    session.pop('userFirst', None)
+    session.pop('userLast', None)
+    print("session has been deleted")
+    return render_template('done.html', userFirst=userFirst)
     
 @app.route('/scan', methods = ['GET', 'POST'])
 def scan():
@@ -171,15 +197,12 @@ def scan():
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
         if 'back' in request.form:
-            del g.id
-            # os.system('rm temp/data.txt')
+            os.system('rm temp/data.txt')
             stop_writing_id = True
             sleep(1)
             return redirect(url_for('signup'))
     else:
-        if g.id:
-            del g.id
-        # os.system('rm temp/data.txt')
+        os.system('rm temp/data.txt')
         stop_writing_id = False
         return render_template('scan.html')
     # elif request.method == 'GET':
@@ -224,31 +247,23 @@ def getID():
         if stop_writing_id == True:
             return None
         try:
-            id = g.id._get_current_object()
-            # with open('temp/data.txt') as json_file:
-            #     data = json.load(json_file)
+            with open('temp/data.txt') as json_file:
+                data = json.load(json_file)
         except:
             print("File is empty or reading Error")
             print("sleeping for 0.5 seconds")
             sleep(0.5)
         else:
-            del g.id
-            if '0x0' in id:
-                stop_writing_id == True
-                return json.dumps({"code":"0x0"})
-            elif None or False in id:
+            if 'code' in data:
+                if data['code'] == '0x0':
+                    os.system('rm temp/data.txt')
+                    stop_writing_id == True
+                    return json.dumps({"code":"0x0"})
                 print("Another error occured")
                 print(data['code'])
                 return None
-                # if data['code'] == '0x0':
-                #     os.system('rm temp/data.txt')
-                #     stop_writing_id == True
-                #     return json.dumps({"code":"0x0"})
-                # print("Another error occured")
-                # print(data['code'])
-                # return None
-            # id = data['id']
-            # os.system('rm temp/data.txt')
+            id = data['id']
+            os.system('rm temp/data.txt')
             session['id'] = id
             stop_writing_id == True
             return json.dumps({"code":"0x1"})

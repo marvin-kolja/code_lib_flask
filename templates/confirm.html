@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/center-div.css') }}">
+{% endblock %}
+
+{% block head %}
+<title>Scan Card</title>
+{% endblock %}
+
+{% block body %}
+<div>
+    <h2>Waiting for confirmation...</h2>
+    <p>We have send you an e-mail. ({{first}}.{{last}}@code.berlin)</p>
+    <p>Please confirm it to finish the process.</p>
+</div>
+
+<script>
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+window.location = "/signup/checkconfirm";
+</script>
+{% endblock %}

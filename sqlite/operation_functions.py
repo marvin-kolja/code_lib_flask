@@ -90,3 +90,32 @@ class Operations:
         else:
             return False
 
+    def check_confirm_with_userId(self, userId):
+        self.c.execute("SELECT * FROM users WHERE userId = :userId", {"userId": userId})
+        check = self.c.fetchall()
+        if check[0][5] == 1:
+            return True
+        else: 
+            return False
+
+    def confirm_with_userId(self, userId):
+        print("Should confirm now!")
+        print(userId)
+        print(type(userId))
+        with self.conn:
+            self.c.execute("""UPDATE users SET userConfirm = :userConfirm
+                        WHERE userId = :userId""",
+                    {"userId": userId, 'userConfirm': 1})
+        return True
+
+    def reset_confirm_with_userId(self, userId):
+        print("Should reset confirm now!")
+        print(userId)
+        print(type(userId))
+        with self.conn:
+            self.c.execute("""UPDATE users SET userConfirm = :userConfirm
+                        WHERE userId = :userId""",
+                    {"userId": userId, 'userConfirm': 0})
+        return True
+
+

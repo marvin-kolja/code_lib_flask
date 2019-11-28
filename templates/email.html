@@ -13,7 +13,7 @@
 <h1>Card recognized!</h1>
 <p>Now, that the system recognized your card, I need your name. </p>
 <div id = "keyuptrigger" class = "emailform">
-    <form action = "/signup/email-confirm" method = "post" autocomplete="off">
+    <form action = "/signup/email-send" method = "post" autocomplete="off">
         <p><input type = "text" name = "first" placeholder = "First Name"/></p>
         <p><input type = "text" name = "last" placeholder = "Last Name"/></p>
         <p id="email" class="{{err}}">{{ email }}</p>
