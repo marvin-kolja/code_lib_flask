@@ -191,8 +191,8 @@ def signupDone():
     print("session has been deleted")
     return render_template('done.html', userFirst=userFirst)
     
-@app.route('/scan', methods = ['GET', 'POST'])
-def scan():
+@app.route('/scan/<method>', methods = ['GET', 'POST'])
+def scan(method):
     global stop_writing_id
     # POST / FETCH to update this side if scanner scanned something
     if request.method == 'POST':
@@ -205,40 +205,6 @@ def scan():
         os.system('rm temp/data.txt')
         stop_writing_id = False
         return render_template('scan.html')
-    # elif request.method == 'GET':
-    #     # SHOULD NOT BE ACCESABLE FOR USERS
-    #     session['scanning'] = True
-    #     os.system('rm temp/data.txt')
-    #     scanning = session.get('scanning')
-    #     print(scanning)
-    #     if scanning == True:
-    #         print("Scanner already scans")
-    #     else:
-    #         try:
-    #             r = requests.get('http://localhost:5000/scanner', timeout=5)
-    #             print(r.text)
-    #         except requests.exceptions.RequestException:
-    #             pass
-    #     timeout_start = time.time()
-    #     while True:
-    #         if time.time() > timeout_start + timeout:
-    #             return json.dumps({'code':'0x2'})
-    #         else:
-    #             try:
-    #                 with open('temp/data.txt') as json_file:
-    #                     data = json.load(json_file)
-    #             except:
-    #                 print("File is empty or reading Error")
-    #             else:
-    #                 id = data['id']
-    #                 os.system('rm temp/data.txt')
-    #                 session['id'] = id
-    #                 return json.dumps({"code":"0x1"})
-    #         print("no id")
-    #         sleep(1)
-    #         continue
-    # else:
-    #     return 'something went wrong'
 
 @app.route('/getid', methods = ['GET'])
 def getID():
@@ -319,5 +285,5 @@ def checkData():
 
 if __name__ == "__main__":
     app.secret_key = '56732356754345678'
-    app.run(debug=True, host='0.0.0.0', threaded=True)
+    app.run(debug=True, host='libscanner.0.0.0.0', threaded=True)
 
