@@ -8,6 +8,9 @@ from datetime import datetime
 from ..sqlite.operation_functions import Operations
 from ..sqlite.users import User
 from time import sleep
+from ..temp import Temp
+
+temp = Temp()
 
 @signup.route('/signup', methods = ['POST', 'GET'])
 def signup_():
@@ -18,22 +21,21 @@ def signup_():
             """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
             return redirect(url_for('scanner.scan', method='signup'))
         else:
-            return render_template('signup.html')
+            return render_template('signup/signup.html')
     else:
-        return render_template('signup.html')        
+        return render_template('signup/signup.html')        
 
 
 @signup.route('/signup/form')
 def signupForm():
-    global stop_writing_id
-    stop_writing_id = True
+    temp.temp(False, "write_status", "w")
     # Needs input
     if request.args.get("err"):
         err = request.args.get("err")
         email = request.args.get("email")
-        return render_template('email.html', err=err, email=email)
+        return render_template('signup/email.html', err=err, email=email)
     else:
-        return render_template('email.html')
+        return render_template('signup/email.html')
 
 @signup.route('/signup/email-send', methods = ['POST', 'GET'])
 def signupEmailSend():
@@ -51,9 +53,9 @@ def signupEmailSend():
             session['userFirst'] = first_name
             session['userLast'] = last_name
             session['userId'] = op.check_user_exist_name(user)
-            return redirect(url_for("signupConfirm"))
+            return redirect(url_for("signup.signupConfirm"))
         else:
-            return redirect(url_for("signupForm", err="err1", email=email))
+            return redirect(url_for("signup.signupForm", err="err1", email=email))
     else:
         return "Something went wrong"
     # return redirect(url_for('signupConfirm'))
@@ -63,7 +65,7 @@ def signupEmailSend():
 @signup.route('/signup/confirm', methods = ['POST', 'GET'])
 def signupConfirm():
     # screen: Waiting for confirmation...
-    return render_template('confirm.html', userId = session['userId'], first = session['userFirst'], last = session['userLast'])
+    return render_template('signup/confirm.html', userId = session['userId'], first = session['userFirst'], last = session['userLast'])
 
 @signup.route('/signup/checkconfirm', methods = ['GET'])
 def checkConfirm():
@@ -82,10 +84,18 @@ def checkConfirm():
                 # Delete session
                 session.pop('id', None)
                 print('Session with the key id got cleaned up')
-                return redirect(url_for("signupDone"))
+                return redirect(url_for("signup.signupDone"))
         else:
             print('not confirmed yet')
         sleep(3)
+
+@signup.route('/confirmlink')
+def confirm():
+    # has to be changed with email etc
+    # session has to different aswell (userId inside the link)
+    op = Operations()
+    op.confirm_with_userId(session['userId'])
+    return 'Confirmed'
 
 @signup.route('/signup/done')
 def signupDone():
@@ -97,4 +107,4 @@ def signupDone():
     session.pop('userFirst', None)
     session.pop('userLast', None)
     print("session has been deleted")
-    return render_template('done.html', userFirst=userFirst)
+    return render_template('signup/done.html', userFirst=userFirst)

@@ -9,33 +9,33 @@ class Reader():
 
     def __init__(self):
         self.GPIO = GPIO
+        self.GPIO.cleanup()
         self.reader = SimpleMFRC522()
+        self.decoration = "\n#--- "
 
 
     def clean_GPIO(self):
-        print("\n\nProgramm has been terminated...")
+        print(f"{self.decoration}Programm has been terminated...")
         self.GPIO.cleanup()
-        print("GPIO has been cleaned up...")
+        print(f"{self.decoration}GPIO has been cleaned up...")
 
 
     def read(self):
         try:
-            print("sleeping for 2 seconds")
+            print(f"{self.decoration}sleeping for 2 seconds")
             time.sleep(2)
-            print('ready to scan')
 
             self.reader
 
-            print('scanner initialized')
+            print(f'{self.decoration}scanner initialized')
 
             id = str(self.reader.read_id())
 
-            print('Scan successfull')
+            print(f'{self.decoration}Scan successfull')
 
         except:
             return '0x0'
         else:
             self.clean_GPIO()  
-            data = {'id':id}
-            return data
+            return id
 

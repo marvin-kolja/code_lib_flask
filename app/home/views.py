@@ -5,12 +5,13 @@ from . import home
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
 import requests
 from datetime import datetime
+from ..temp import Temp
+
+temp = Temp()
 
 @home.route('/', methods = ['POST', 'GET'])
 def index():
-    global stop_writing_id
-    stop_writing_id = True
-    
+    temp.temp(False, "write_status", "w")
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
 
@@ -18,9 +19,9 @@ def index():
         if request.form['start'] == '':
             return redirect(url_for('home.chooselogin'))
         else:
-            return render_template('home.html', date = x)
+            return render_template('home/home.html', date = x)
     else:
-        return render_template('home.html', date = x)
+        return render_template('home/home.html', date = x)
 
 @home.route('/chooselogin', methods = ['POST', 'GET'])
 def chooselogin():
@@ -30,6 +31,6 @@ def chooselogin():
         elif request.form['button'] == 'Sign up':
             return redirect(url_for('signup.signup_'))
         else:
-            return render_template('choose.html')
+            return render_template('home/choose.html')
     else:
-        return render_template('choose.html')
+        return render_template('home/choose.html')

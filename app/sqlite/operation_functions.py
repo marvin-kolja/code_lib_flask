@@ -6,7 +6,7 @@ class Operations:
 
     def __init__(self):
         database_contents = ''
-        self.conn = sqlite3.connect('sqlite/library.db', check_same_thread=False)
+        self.conn = sqlite3.connect('app/sqlite/library.db', check_same_thread=False)
         self.c = self.conn.cursor()
 
     # def insert_user(self, user):

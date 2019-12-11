@@ -4,9 +4,7 @@ from flask import Blueprint
 
 signup = Blueprint(
     'signup',
-    __name__,
-    template_folder='templates',
-    static_folder='static'
+    __name__
 )
 
 from . import views
