@@ -20,16 +20,20 @@ def scan(method):
         if 'back' in request.form:
             temp.temp(False, "write_status", "w")
             sleep(1)
-            return redirect(url_for(method + '.' + method + '_'))
+            if method == 'signup':
+                return redirect(url_for('signup.signup_'))
+            elif method == 'login':
+                return redirect(url_for('home.chooselogin'))
     else:
         temp.temp(True, "write_status", "w")
         return render_template('scanner/scan_' + method + '.html')
 
 @scanner.route('/getid', methods = ['GET'])
 def getID():
+    temp.temp(True, "write_status", "w")
     while True:
         if temp.temp(None, "write_status", "r") == False:
-            return None
+            return '0x2'
         try:
             data = temp.temp(None, "id", "r")
         except:

@@ -6,7 +6,7 @@ class Operations:
 
     def __init__(self):
         database_contents = ''
-        self.conn = sqlite3.connect('library.db', check_same_thread=False)
+        self.conn = sqlite3.connect('app/sqlite/library.db', check_same_thread=False)
         self.c = self.conn.cursor()
 
     def insert_user(self, user, email):
@@ -16,7 +16,7 @@ class Operations:
                 # c.execute("INSERT INTO users VALUES (?, ?, ?)", (user.first, user.last, user.id))
 
                 """ Second possiblity to insert upper data to the database """
-                self.c.execute("INSERT INTO users VALUES (:userFirst, :userLast, :userRfid, :userEmail)", {"userFirst": user.first, "userLast": user.last, "userRfid": user.id, "userEmail": email})
+                self.c.execute("INSERT INTO users VALUES (:userId, :userFirst, :userLast, :userEmail, :userRfid, :userConfirm)", {"userId": None, "userFirst": user.first, "userLast": user.last, "userEmail": email, "userRfid": user.id, "userConfirm": 0})
                 print("\n!!!User created!!!\n")
         else:
             print("User already exist!")

@@ -11,6 +11,7 @@ temp = Temp()
 
 @home.route('/', methods = ['POST', 'GET'])
 def index():
+    session.pop("userId", None)
     temp.temp(False, "write_status", "w")
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")

@@ -47,13 +47,17 @@ def signupEmailSend():
 
         user = User(first_name, last_name, session['id'])
 
+        session['userFirst'] = first_name
         op = Operations()
         if op.check_user_exist_name(user):
             op.update_id(op.check_user_exist_name(user), session['id'])
+            session['userId'] = op.check_user_exist_name(user)
             return redirect(url_for('signup.signupDone'))
         else:
             op.insert_user(user, email)
+            session['userId'] = op.check_user_exist_name(user)
             return redirect(url_for('signup.signupDone'))
+        
 
         # op = Operations()
         # if op.check_user_exist_name(user):

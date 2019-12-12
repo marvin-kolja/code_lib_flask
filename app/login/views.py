@@ -10,7 +10,9 @@ from flask import Flask, render_template, redirect, url_for, request, session, j
 
 @login.route('/login/<userId>', methods = ['POST', 'GET'])
 def login_(userId):
-    g.userId = userId
+    session.pop('id', None)
+    print('Session with the key id got cleaned up')
+    session['userId'] = userId
     return redirect(url_for('dash.dash_'))
 
     

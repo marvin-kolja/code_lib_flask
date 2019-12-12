@@ -13,7 +13,7 @@
 <p></p>
 <p>The system will give you feedback if the card is working.</p>
 
-<div id="box">
+<div id="alert">
 </div>
 
 <form action = "/scan/signup" method = "post">
@@ -25,14 +25,14 @@ const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-var alertError = '<strong>Failed!</strong> The scanning failed! Please report it to the Team.'
-var alertDatabase = '<strong>Warning!</strong> The ID is already connected to a user or a book!'
-var alertSuccess = '<strong>Success!</strong> Your Card was recognized. Hang on second.'
-var alertInfo =  '<strong>Ready!</strong> The Scanner is ready for scanning a Card.'
+var alertError = '<div class="box box-scanner-failed"><strong>Failed!</strong> The scanning failed! Please report it to the Team.</div>'
+var alertDatabase = '<div class="box box-scanner-database"><strong>Warning!</strong> The ID is already connected to a user or a book!</div>'
+var alertSuccess = '<div class="box box-scanner-success"><strong>Success!</strong> Your Card was recognized. Hang on a second.</div>'
+var alertInfo =  '<div class="box box-scanner-info"><strong>Ready!</strong> The Scanner is ready for scanning a Card.</div>'
+var alertDiv = document.getElementById("alert");
 
 function loadScanner() {
-    document.getElementById("box").className = "box box-scanner-info";
-    document.getElementById("box").innerHTML = alertInfo;
+    alertDiv.innerHTML = alertInfo + alertDiv.innerHTML;
     document.getElementById("back").innerHTML = '<input onclick="abortFunction()" type = "submit" name = "back" value = "Back"/>';
 
     var xhttp = new XMLHttpRequest();
@@ -52,9 +52,8 @@ function loadScanner() {
             if (responseObj.code == '0x1') {
                 // alert scan succesfull
 
-                document.getElementById("box").className = 'box box-scanner-success';
-                document.getElementById("box").innerHTML = alertSuccess
-                setTimeout(function(){ loadCheck(); }, 1000);   
+                alertDiv.innerHTML = alertSuccess;
+                loadCheck();  
                 
             }
             if (responseObj.code == '0x0') {
@@ -95,17 +94,14 @@ function loadCheck() {
             if (responseObj.code == '1x0') {
                 // alert User is already connected with this ID
                 // alert("The scanned ID is already connected to a user!")
-                document.getElementById("box").className = 'box box-scanner-database';
-                document.getElementById("box").innerHTML = alertDatabase
-                setTimeout(function(){ loadScanner(); }, 3000);   
+                alertDiv.innerHTML = alertDatabase;
+                loadScanner();
             }
             if (responseObj.code == '1x1') {
                 // alert Book is already connected with this ID
                 // alert("The scanned ID is already connected to a book!")
-                document.getElementById("box").className = 'box box-scanner-database';
-                document.getElementById("box").innerHTML = alertDatabase
-
-                setTimeout(function(){ loadScanner(); }, 3000);              
+                alertDiv.innerHTML = alertDatabase;
+                loadScanner();  
             }
             if (responseObj.code == '1x2') {
                 window.location = "/signup/form";
