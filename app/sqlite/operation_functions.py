@@ -6,20 +6,20 @@ class Operations:
 
     def __init__(self):
         database_contents = ''
-        self.conn = sqlite3.connect('app/sqlite/library.db', check_same_thread=False)
+        self.conn = sqlite3.connect('library.db', check_same_thread=False)
         self.c = self.conn.cursor()
 
-    # def insert_user(self, user):
-    #     if self.check_user_exist_name(user) == False:
-    #         with self.conn:
-    #             # """ First possiblity to insert upper data to the database """
-    #             # c.execute("INSERT INTO users VALUES (?, ?, ?)", (user.first, user.last, user.id))
+    def insert_user(self, user, email):
+        if self.check_user_exist_name(user) == False:
+            with self.conn:
+                # """ First possiblity to insert upper data to the database """
+                # c.execute("INSERT INTO users VALUES (?, ?, ?)", (user.first, user.last, user.id))
 
-    #             """ Second possiblity to insert upper data to the database """
-    #             self.c.execute("INSERT INTO users VALUES (:first, :last, :id)", {"first": user.first, "last": user.last, "id": user.id})
-    #             print("\n!!!User created!!!\n")
-    #     else:
-    #         print("User already exist!")
+                """ Second possiblity to insert upper data to the database """
+                self.c.execute("INSERT INTO users VALUES (:userFirst, :userLast, :userRfid, :userEmail)", {"userFirst": user.first, "userLast": user.last, "userRfid": user.id, "userEmail": email})
+                print("\n!!!User created!!!\n")
+        else:
+            print("User already exist!")
 
     def insert_data(self):
         with self.conn:
@@ -31,6 +31,22 @@ class Operations:
     def get_data_by_userId(self, userId):
         self.c.execute("SELECT * FROM users WHERE userId=:userId", {"userId":userId})
         return self.c.fetchall()
+
+    def get_book_data_by_userId(self, userId):
+        self.c.execute("SELECT * FROM book_bookcopies WHERE userId=:userId", {"userId":userId})
+        bookcopyId = self.c.fetchall()
+        books = {}
+        x = 1
+        for i in bookcopyId:
+            book_data = []
+            bookId = i[1]
+            self.c.execute("SELECT * FROM book_book WHERE bookId=:bookId", {"bookId":bookId})
+            book = self.c.fetchall()
+            book_data.extend([x,book[0][2],book[0][11],i[6],i[7]])
+            books[i[1]] = book_data
+            x += 1
+        return books
+        
 
 
     def update_id(self, userId, id):

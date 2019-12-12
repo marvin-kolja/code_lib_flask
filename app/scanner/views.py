@@ -20,10 +20,10 @@ def scan(method):
         if 'back' in request.form:
             temp.temp(False, "write_status", "w")
             sleep(1)
-            return redirect(url_for('signup.signup_'))
+            return redirect(url_for(method + '.' + method + '_'))
     else:
         temp.temp(True, "write_status", "w")
-        return render_template('scanner/scan.html')
+        return render_template('scanner/scan_' + method + '.html')
 
 @scanner.route('/getid', methods = ['GET'])
 def getID():
@@ -60,11 +60,11 @@ def checkData():
             userId = op.check_user_exist_id(id)
             bookId = op.check_book_exist_id(id)
             if userId:
-                print("ID is already connected with a user")
+                print("ID is connected with a user")
                 print(userId)
                 code = {'code':'1x0', "userId":userId}
             elif bookId:
-                print("ID is already connected with a book")
+                print("ID is connected with a book")
                 print(userId)
                 code = {'code':'1x1', "bookId":bookId}
             else:

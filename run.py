@@ -2,15 +2,11 @@ from app import app
 
 import threading
 import json
-
 from app.reader import Reader
-
 from app.temp import Temp
-
 import os
 
 temp = Temp()
-
 decoration = " ** "
 
 def run_job():

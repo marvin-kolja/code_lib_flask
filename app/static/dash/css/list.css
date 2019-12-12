@@ -1,0 +1,89 @@
+body{
+    background: rgb(36, 36, 36);
+    padding: 0;
+    margin: 0;
+}
+.tableleft{
+    position: absolute;
+    overflow-y: scroll;
+    width: 40%;
+    height: 60%;
+    left: 5%;
+    top: 25%;
+}
+.tableright{
+    position: absolute;
+    overflow-y: scroll;
+    width: 40%;
+    height: 60%;
+    right: 5%;
+    top: 25%;
+}
+
+
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+
+/* .table::-webkit-scrollbar {
+    display: none;
+} */
+
+/* Hide scrollbar for IE and Edge */
+
+/* .table {
+    -ms-overflow-style: none;
+} */
+
+.flex-container {
+    background-color: rgb(65, 65, 65);
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    flex-direction: column;
+    align-items: center;
+  }
+
+.flex-item {
+    color: rgb(255, 255, 255);
+    width: 60%;
+    padding: 10px;
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 10px;
+}
+.left{
+    text-align: left;
+
+}
+.right{
+    text-align: right;
+    font-size: 15px;
+}
+.h1left{
+    position: absolute;
+    width: 40%;
+    top: 15%;
+    left: 5%;
+}
+.h1right{
+    position: absolute;
+    width: 40%;
+    top: 15%;
+    right: 5%;
+}
+h1 {
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    
+}
+  
+hr.lis {
+    border: 0.5px solid rgb(252, 252, 252);
+    width: 40%;
+}
+  

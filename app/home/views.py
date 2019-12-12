@@ -27,7 +27,7 @@ def index():
 def chooselogin():
     if request.method == 'POST':
         if request.form['button'] == 'Log in':
-            return redirect(url_for('login.login_'))
+            return redirect(url_for('scanner.scan', method='login'))
         elif request.form['button'] == 'Sign up':
             return redirect(url_for('signup.signup_'))
         else:

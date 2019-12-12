@@ -1,5 +1,4 @@
 # app/signup/views.py
-# This file is for the Sleepscreen (/) and choose screen (/chooselogin)
 
 from . import signup
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
@@ -40,22 +39,30 @@ def signupForm():
 @signup.route('/signup/email-send', methods = ['POST', 'GET'])
 def signupEmailSend():
     # send email
-    # For the MVP just return redirect to confirm
+    # For the EXPO MVP Just add a user to the Database
     if request.method == 'POST':
         first_name = request.form['first'].lower()
         last_name = request.form['last'].lower()
         email = (first_name + '.' + last_name + "@code.berlin")
 
-        user = User(first_name, last_name, None)
+        user = User(first_name, last_name, session['id'])
 
         op = Operations()
         if op.check_user_exist_name(user):
-            session['userFirst'] = first_name
-            session['userLast'] = last_name
-            session['userId'] = op.check_user_exist_name(user)
-            return redirect(url_for("signup.signupConfirm"))
+            op.update_id(op.check_user_exist_name(user), session['id'])
+            return redirect(url_for('signup.signupDone'))
         else:
-            return redirect(url_for("signup.signupForm", err="err1", email=email))
+            op.insert_user(user, email)
+            return redirect(url_for('signup.signupDone'))
+
+        # op = Operations()
+        # if op.check_user_exist_name(user):
+        #     session['userFirst'] = first_name
+        #     session['userLast'] = last_name
+        #     session['userId'] = op.check_user_exist_name(user)
+        #     return redirect(url_for("signup.signupConfirm"))
+        # else:
+        #     return redirect(url_for("signup.signupForm", err="err1", email=email))
     else:
         return "Something went wrong"
     # return redirect(url_for('signupConfirm'))
