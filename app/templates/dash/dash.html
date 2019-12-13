@@ -2,6 +2,9 @@
 
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='dash/css/list.css') }}">
+<script src="{{url_for('static', filename='dash/js/login.js')}}"></script>
+<script src="{{url_for('static', filename='dash/js/logout.js')}}"></script>
+<script src="{{url_for('static', filename='dash/js/reload.js')}}"></script>
 {% endblock %}
 
 {% block head %}
@@ -9,10 +12,9 @@
 {% endblock %}
 
 {% block body %}
-<meta http-equiv="refresh" content="2">
-<p>{{userFirst}}</p>
-<p>{{userLast}}</p>
-<p>{{userEmail}}</p>
+<div id='overlay_login'><h1>Welcome, {{userFirst}}.</h1></div>
+<div id='overlay_logout'><h1>Have a nice day, {{userFirst}}.</h1></div>
+<p>{{userFirst}} {{userLast}}, {{userEmail}}</p>
 <div class="h2left">Your Books</div>
 <div class="h2right">History</div>
 <div class="tableleft"> 
@@ -28,4 +30,7 @@
     <div class="flex-container">
     </div>
 </div>
+<form action = "/logout" method = "post">
+    <p><input type = "submit" name = "logout" value = "Logout"/></p>
+</form>
 {% endblock %}

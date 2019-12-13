@@ -8,6 +8,7 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="content">DC</div>
     <div class="h1left"><h1>Your Books</h1></div>
     <div class="h1right"><h1>History</h1></div>
     <div class="tableleft"> 
@@ -39,5 +40,26 @@
         </div>
     </div>
     <div class="grade"></div>
+
+<script type="text/javascript">
+
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+$(document).ready(function() {
+      // place this within dom ready function
+      function showpanel() {     
+        $( "#first" ).load('#first');
+        setTimeout(function(){ showpanel(); }, 2000); 
+      }
+
+      // use setTimeout() to execute
+      setTimeout(showpanel, 6000);
+});
+
+
+</script>
+
 </body>
 </html>

@@ -3,7 +3,9 @@
 from . import dash
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
 from ..sqlite.operation_functions import Operations
+from time import sleep
 
+#rename x pls!
 @dash.route('/dash', methods = ['POST', 'GET'])
 def dash_():
     # Load data from Database!
@@ -18,3 +20,10 @@ def dash_():
     bookData = op.get_book_data_by_userId(session['userId'])
 
     return render_template('dash/dash.html', userFirst = userFirst, userLast = userLast, userEmail=userEmail, bookData = bookData)
+
+@dash.route('logout', methods = ["POST"])
+def logout():
+    # Pop sessions
+    session.pop("userId", None)
+    sleep(2.4)
+    return redirect(url_for('home.index'))
