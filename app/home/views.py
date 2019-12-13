@@ -1,7 +1,7 @@
 # app/home/views.py
 # This file is for the Sleepscreen (/) and choose screen (/chooselogin)
 
-from .. import app
+
 from . import home
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
 import requests
@@ -13,7 +13,7 @@ temp = Temp()
 
 @home.route('/', methods = ['POST', 'GET'])
 def index():
-    app.secret_key = os.urandom(32)
+
     temp.temp(False, "write_status", "w")
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")

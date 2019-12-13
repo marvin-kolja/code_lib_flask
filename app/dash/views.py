@@ -21,7 +21,7 @@ def dash_():
 
     return render_template('dash/dash.html', userFirst = userFirst, userLast = userLast, userEmail=userEmail, bookData = bookData)
 
-@dash.route('logout', methods = ["POST"])
+@dash.route('/logout', methods = ["POST"])
 def logout():
     # Pop sessions
     session.pop("userId", None)

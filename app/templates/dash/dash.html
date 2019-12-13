@@ -12,8 +12,9 @@
 {% endblock %}
 
 {% block body %}
-<div id='overlay_login'><h1>Welcome, {{userFirst}}.</h1></div>
-<div id='overlay_logout'><h1>Have a nice day, {{userFirst}}.</h1></div>
+<meta http-equiv="refresh" content="5" >
+<div id='overlaylogin'><h1>Welcome, {{userFirst}}.</h1></div>
+<div id='overlaylogout'><h1>Have a nice day, {{userFirst}}.</h1></div>
 <p>{{userFirst}} {{userLast}}, {{userEmail}}</p>
 <div class="h2left">Your Books</div>
 <div class="h2right">History</div>
@@ -33,4 +34,23 @@
 <form action = "/logout" method = "post">
     <p><input type = "submit" name = "logout" value = "Logout"/></p>
 </form>
+<script>
+$(document).ready(function() {
+    $('#overlaylogin').fadeIn(0).delay(2000).fadeOut(400)
+});
+$( "form" ).submit(function() {
+    $('#overlaylogout').fadeIn(400).delay(2000);
+});
+  
+// $(document).ready(function() {
+//     // place this within dom ready function
+//     function reload() {     
+//         $( ".flex-container" ).load('.flex-container');
+//         setTimeout(function(){ reload(); }, 2000); 
+//     }
+
+//     // use setTimeout() to execute
+//     setTimeout(reload, 2400);
+// });
+</script>
 {% endblock %}
