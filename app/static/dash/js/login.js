@@ -1,3 +1,3 @@
 $(document).ready(function() {
-    $('#overlay').fadeIn(400).delay(2000).fadeOut(400)
-  });
+  $('#overlaylogin').fadeIn(0).delay(2000).fadeOut(400)
+});

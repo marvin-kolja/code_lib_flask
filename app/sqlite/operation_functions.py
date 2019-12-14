@@ -35,16 +35,17 @@ class Operations:
     def get_book_data_by_userId(self, userId):
         self.c.execute("SELECT * FROM book_bookcopies WHERE userId=:userId", {"userId":userId})
         bookcopyId = self.c.fetchall()
-        books = {}
+        books = {'books': []}
         x = 1
         for i in bookcopyId:
-            book_data = []
+            book_data = {}
             bookId = i[1]
             self.c.execute("SELECT * FROM book_book WHERE bookId=:bookId", {"bookId":bookId})
             book = self.c.fetchall()
-            book_data.extend([x,book[0][2],book[0][11],i[6],i[7]])
-            books[i[1]] = book_data
+            book_data = {'num':x, 'title': book[0][2], 'id': book[0][11], 'rent': i[6], 'return': i[7]}
+            books['books'].append(book_data)
             x += 1
+        print(books)
         return books
         
 

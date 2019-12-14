@@ -27,3 +27,17 @@ def logout():
     session.pop("userId", None)
     sleep(2.4)
     return redirect(url_for('home.index'))
+
+@dash.route('dash/get_data', methods = ['POST'])
+def get_data():
+
+    req = request.get_json()
+
+    print(req)
+
+    op = Operations()
+    
+    bookData = op.get_book_data_by_userId(session['userId'])
+
+    res = make_response(render_template('dash/dash_update.html', ), 200)
+    return res
