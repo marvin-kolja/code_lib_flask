@@ -18,12 +18,12 @@
 <div class="h2left">Your Books</div>
 <div class="h2right">History</div>
 <div class="tableleft"> 
-    <div class="flex-container">
-        {%for book in bookData%}
+    <div id='books' class="flex-container">
+        <!-- {%for book in bookData%}
 
             <div class="flex-item"><div class="left">{{bookData[book][0]}}. {{bookData[book][1]}}, {{bookData[book][2]}}</div><div class="right">Rent Date: {{bookData[book][3]}}, Return Date: {{bookData[book][4]}}</div></div>
             <hr class="lis">
-        {%endfor%} 
+        {%endfor%}  -->
     </div>
 </div>
 <div class="tableleft"> 
@@ -31,6 +31,49 @@
     </div>
 </div>
 <form action = "/logout" method = "post">
-    <p><input type = "submit" name = "logout" value = "Logout"/></p>
+    <p id="logout"><input type = "submit" name = "logout" value = "Logout"/></p>
 </form>
+<script>
+function asyncCall() {
+    function reload() {     
+        loadData();
+    }
+    reload();
+}
+$(document).ready( function() {
+    asyncCall();    
+});
+async function loadData() {
+    var books = document.getElementById("books");
+    document.getElementById("logout").innerHTML = '<input onclick="abortFunction()" type = "submit" name = "logout" value = "Logout"/>';
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.addEventListener("abort", transferCanceled);
+
+    xhttp.open("GET", "/dash/get_data", true);
+
+    xhttp.responseType = 'json';
+
+    xhttp.onreadystatechange = await function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var responseObj = xhttp.response;
+        
+            document.getElementById("logout").innerHTML = '<input onclick="abortFunction()" type = "submit" name = "logout" value = "Logout" disabled />';
+            books.innerHTML = responseObj.code;  
+            asyncCall();
+
+        }
+    };
+    function transferCanceled(evt) {
+        alert("The transfer has been canceled by the user.");
+    }
+    xhttp.send();
+
+    function abortFunction() {
+        xhttp.abort()
+    }
+    
+}
+</script>
 {% endblock %}

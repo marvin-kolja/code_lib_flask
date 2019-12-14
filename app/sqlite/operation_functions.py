@@ -32,18 +32,34 @@ class Operations:
         self.c.execute("SELECT * FROM users WHERE userId=:userId", {"userId":userId})
         return self.c.fetchall()
 
+    # def get_book_data_by_userId(self, userId):
+    #     self.c.execute("SELECT * FROM book_bookcopies WHERE userId=:userId", {"userId":userId})
+    #     bookcopyId = self.c.fetchall()
+    #     books = {'books': []}
+    #     x = 1
+    #     for i in bookcopyId:
+    #         book_data = {}
+    #         bookId = i[1]
+    #         self.c.execute("SELECT * FROM book_book WHERE bookId=:bookId", {"bookId":bookId})
+    #         book = self.c.fetchall()
+    #         book_data = {'num':x, 'title': book[0][2], 'id': book[0][11], 'rent': i[6], 'return': i[7]}
+    #         books['books'].append(book_data)
+    #         x += 1
+    #     print(books)
+    #     return books
+
     def get_book_data_by_userId(self, userId):
         self.c.execute("SELECT * FROM book_bookcopies WHERE userId=:userId", {"userId":userId})
         bookcopyId = self.c.fetchall()
-        books = {'books': []}
+        books = {}
         x = 1
         for i in bookcopyId:
-            book_data = {}
+            book_data = []
             bookId = i[1]
             self.c.execute("SELECT * FROM book_book WHERE bookId=:bookId", {"bookId":bookId})
             book = self.c.fetchall()
-            book_data = {'num':x, 'title': book[0][2], 'id': book[0][11], 'rent': i[6], 'return': i[7]}
-            books['books'].append(book_data)
+            book_data.extend([x,book[0][2],book[0][11],i[6],i[7]])
+            books[i[1]] = book_data
             x += 1
         print(books)
         return books
@@ -135,4 +151,13 @@ class Operations:
                     {"userId": userId, 'userConfirm': 0})
         return True
 
+    def connect_userId_with_book(self, bookRfid,userId):
+        print("Should update book now!")
+        print(userId)
+        print(type(userId))
+        with self.conn:
+            self.c.execute("""UPDATE book_bookcopies SET userId = :userId
+                        WHERE bookRfid = :bookRfid""",
+                    {"userId": userId, 'bookRfid': bookRfid})
+        return True
 

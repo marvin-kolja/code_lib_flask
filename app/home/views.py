@@ -13,7 +13,6 @@ temp = Temp()
 
 @home.route('/', methods = ['POST', 'GET'])
 def index():
-
     temp.temp(False, "write_status", "w")
     x = datetime.now()
     x = x.strftime("%a" + " " + "%H" + ":" + "%M")
