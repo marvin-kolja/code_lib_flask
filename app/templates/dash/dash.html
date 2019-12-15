@@ -34,6 +34,9 @@
     <p id="logout"><input type = "submit" name = "logout" value = "Logout"/></p>
 </form>
 <script>
+$( "form" ).submit(function() {
+  $('#overlaylogout').fadeIn(400).delay(2000);
+});
 function asyncCall() {
     function reload() {     
         loadData();
@@ -66,7 +69,6 @@ async function loadData() {
         }
     };
     function transferCanceled(evt) {
-        alert("The transfer has been canceled by the user.");
     }
     xhttp.send();
 

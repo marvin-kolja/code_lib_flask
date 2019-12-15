@@ -1,3 +1,1 @@
-$( "form" ).submit(function() {
-  $('#overlaylogout').fadeIn(400).delay(2000);
-});
+// In html file, caused problem!

@@ -73,6 +73,18 @@ input[name = next]:hover {
     background-color: #dfdfdf;
 }
 
+input[name = logout] {
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+    width: 10%;
+    background-color: var(--main-font-color);
+}
+
+input[name = logout]:hover {
+    background-color: #dfdfdf;
+}
+
 
 .box{
     padding: 15px;

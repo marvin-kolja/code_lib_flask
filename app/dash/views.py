@@ -24,7 +24,7 @@ def dash_():
     userLast = userData[0][2]
     userEmail = userData[0][3]
 
-    return render_template('dash/dash.html', userFirst = userFirst, userLast = userLast, userEmail=userEmail)
+    return render_template('dash/dash.html', userFirst = userFirst.capitalize(), userLast = userLast.capitalize(), userEmail=userEmail)
 
 @dash.route('/logout', methods = ["POST"])
 def logout():
@@ -53,14 +53,17 @@ def get_data():
                 data = temp.temp(None, "id", "r")
             except:
                 print("File is empty or reading Error")
-                print("sleeping for 0.5 seconds")
-                sleep(0.5)
+                print("sleeping for 1 seconds")
+                sleep(1)
             else:
                 if "0x0" in data:
                     return json.dumps({"code":"0x0"})
                 else:
                     id = data
-                    op.connect_userId_with_book(id, session['userId'])
+                    if op.check_book_userId(id, session['userId']) == True:
+                        op.update_book_userId_admin(id)
+                    else:
+                        op.connect_userId_with_book(id, session['userId'])
                     break
 
     bookData = op.get_book_data_by_userId(session['userId'])

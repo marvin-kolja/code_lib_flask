@@ -152,7 +152,7 @@ class Operations:
         return True
 
     def connect_userId_with_book(self, bookRfid,userId):
-        print("Should update book now!")
+        print("Should connect userId to book now!")
         print(userId)
         print(type(userId))
         with self.conn:
@@ -160,4 +160,26 @@ class Operations:
                         WHERE bookRfid = :bookRfid""",
                     {"userId": userId, 'bookRfid': bookRfid})
         return True
+
+    def check_book_userId(self, bookRfid, userId):
+        print(userId)
+        print(bookRfid)
+        self.c.execute("SELECT * FROM book_bookcopies WHERE bookRfid = :bookRfid", {"bookRfid": bookRfid})
+        check = self.c.fetchall()
+        print(check[0][3])
+        if check[0][3] == int(userId):
+            print(check[0][3])
+            return True
+        else:
+            return False
+
+    def update_book_userId_admin(self, bookRfid):
+        print("Should set userId of book to admin (userId = 1)!")
+        with self.conn:
+            self.c.execute("""UPDATE book_bookcopies SET userId = :userId
+                        WHERE bookRfid = :bookRfid""",
+                    {"userId": 1, 'bookRfid': bookRfid})
+        return True
+
+
 
