@@ -166,12 +166,14 @@ class Operations:
         print(bookRfid)
         self.c.execute("SELECT * FROM book_bookcopies WHERE bookRfid = :bookRfid", {"bookRfid": bookRfid})
         check = self.c.fetchall()
-        print(check[0][3])
-        if check[0][3] == int(userId):
-            print(check[0][3])
-            return True
+        if check != []:
+            if check[0][3] == int(userId):
+                print(check[0][3])
+                return True
+            else:
+                return False
         else:
-            return False
+            return "0x0"
 
     def update_book_userId_admin(self, bookRfid):
         print("Should set userId of book to admin (userId = 1)!")

@@ -1,1 +1,1 @@
-{"write_status": false}
+{"write_status": true}

@@ -46,6 +46,7 @@ def get_data():
     op = Operations()
 
     if session['dash']:
+        #change checking here !!
         while True:
             if temp.temp(None, "write_status", "r") == False:
                 return '0x0'
@@ -60,7 +61,10 @@ def get_data():
                     return json.dumps({"code":"0x0"})
                 else:
                     id = data
-                    if op.check_book_userId(id, session['userId']) == True:
+                    check = op.check_book_userId(id, session['userId'])
+                    if check == "0x0":
+                        break
+                    elif check == True:
                         op.update_book_userId_admin(id)
                     else:
                         op.connect_userId_with_book(id, session['userId'])
@@ -70,10 +74,12 @@ def get_data():
 
     res = ''
     i = 0
-
-    for book in bookData:
-        i += 1
-        res += f"""<div class="flex-item"><div class="left">{bookData[book][0]}. {bookData[book][1]}, {bookData[book][2]}</div><div class="right">Rent Date: {bookData[book][3]}, Return Date: {bookData[book][4]}</div></div><hr class="lis">"""
+    if bookData == {}:
+        res += """<div class="flex-item"><div class="center">No books, yet...</div></div>"""
+    else:
+        for book in bookData:
+            i += 1
+            res += f"""<div class="flex-item"><div class="left">{bookData[book][0]}. {bookData[book][1]}, {bookData[book][2]}</div><div class="right">Rent Date: {bookData[book][3]}, Return Date: {bookData[book][4]}</div></div><hr class="lis">"""
     print(res)
 
     session['dash'] = True
