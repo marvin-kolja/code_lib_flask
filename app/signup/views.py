@@ -7,27 +7,11 @@ from datetime import datetime
 from ..sqlite.operation_functions import Operations
 from ..sqlite.users import User
 from time import sleep
-from ..temp import Temp
-
-temp = Temp()
-
-@signup.route('/signup', methods = ['POST', 'GET'])
-def signup_():
-    if request.method == 'POST':
-        if 'back' in request.form:
-            return redirect(url_for('home.chooselogin'))
-        elif 'next' in request.form:
-            """Load different .html (e.g. scancard) This one should include a different POST button for scanning"""
-            return redirect(url_for('scanner.scan', method='signup'))
-        else:
-            return render_template('signup/signup.html')
-    else:
-        return render_template('signup/signup.html')        
+      
 
 
 @signup.route('/signup/form')
 def signupForm():
-    temp.temp(False, "write_status", "w")
     # Needs input
     if request.args.get("err"):
         err = request.args.get("err")

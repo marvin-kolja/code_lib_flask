@@ -9,13 +9,11 @@
 {% endblock %}
 
 {% block body %}
-<form action = "/" method = "post">
-    <button class="invisibleBox" type = "submit" name = "start" value = ""></button>
-</form>
 
 <h1 class="logo">CODE library</h1>
-<h2 class="touch">Touch screen to start</h2>
+<h2 class="touch">Scan your Factory Card</h2>
 <p class="time" id="time"></p>
+<div id="alert"></div>
 
 <script>
   $(document).ready(function(){
@@ -30,4 +28,106 @@
   setInterval(updateTime, 1000); // 1000 miliseconds 
   });
 </script>
+
+<script>
+  const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
+
+  var alertError = '<div class="box box-scanner-failed"><strong>Failed!</strong> The scanning failed! Please report it to the Team.</div>'
+  var alertDatabase = '<div class="box box-scanner-database"><strong>Warning!</strong> The ID is not connected to a user!</div>'
+  var alertSuccess = '<div class="box box-scanner-success"><strong>Success!</strong> Your Card was recognized. Hang on a second.</div>'
+  var alertInfo =  '<div class="box box-scanner-info"><strong>Ready!</strong> The Scanner is ready for scanning a Card.</div>'
+  var alertDiv = document.getElementById("alert");
+
+  function loadScanner() {
+      alertDiv.innerHTML = alertInfo + alertDiv.innerHTML;
+
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.addEventListener("abort", transferCanceled);
+
+      xhttp.open("GET", "/getid", true);
+
+      xhttp.responseType = 'json';
+
+      xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              var responseObj = xhttp.response;
+
+              if (responseObj.code == '0x01') {
+                  // direct check
+                  alertDiv.innerHTML = alertSuccess;
+                  loadCheck()
+              }
+              if (responseObj.code == '0x00') {
+                  // alert scanner error
+                  alert("Something went wrong with the scanner! Try again...")
+                  // Should report it to library team
+                  loadScanner()
+              }
+              // if (responseObj.code == '0x2') {
+              //     alert("Timeout...")
+              //     abortFunction()
+              // }
+
+          }
+      };
+      function transferCanceled(evt) {
+          alert("The transfer has been canceled by the user.");
+      }
+      xhttp.send();
+
+      function abortFunction() {
+          xhttp.abort()
+      }
+      
+  }
+  function loadCheck() {
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.addEventListener("abort", transferCanceled);
+
+      xhttp.open("GET", "/checkData", true);
+
+      xhttp.responseType = 'json';
+
+      xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              var responseObj = xhttp.response;
+              if (responseObj.code == '0x01') {
+                  var userId = responseObj.userId
+                  window.location = ("/login/" + userId.toString());  
+              }
+              if (responseObj.code == '0x02') {
+                  // alert Book is already connected with this ID
+                  // alert("The scanned ID is already connected to a book!")
+                  alertDiv.innerHTML = alertDatabase;
+                  loadScanner();        
+              }
+              if (responseObj.code == '0x03') {
+                  // alert ID is not connected with a User
+                  window.location = "/signup/form";
+              }
+              if (responseObj.code == '0x00') {
+                  alert("Something crucial went wrong! Please find help at the Library Team");
+                  loadScanner();
+              }
+          }
+      };
+      // xhttp.onload = function() {
+
+      // };
+      function transferCanceled(evt) {
+          alert("The transfer has been canceled by the user.");
+      }
+      xhttp.send();
+
+      function abortFunction() {
+          xhttp.abort()
+      }
+  }
+  loadScanner()
+</script>
+
 {% endblock %}

@@ -4,7 +4,7 @@ from .login import login
 from .signup import signup
 from .dash import dash
 from .home import home
-from .scanner import scanner
+from .id_handler import id_handler
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
@@ -15,4 +15,4 @@ app.register_blueprint(login)
 app.register_blueprint(signup)
 app.register_blueprint(dash)
 app.register_blueprint(home)
-app.register_blueprint(scanner)
+app.register_blueprint(id_handler)
