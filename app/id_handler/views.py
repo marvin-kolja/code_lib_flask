@@ -30,7 +30,7 @@ def getID():
         s = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
 
         # connect to server on local computer 
-        s.connect((HOST,PORT)) 
+        s.connect(('127.0.0.1',12345)) 
 
         # message you send to server
         ''' PLEASE CHANGE '''

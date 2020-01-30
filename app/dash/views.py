@@ -76,22 +76,22 @@ def get_data():
             print('Received from the server :',str(data.decode('ascii'))) 
 
             # put the UID into a session
-            session['id'] = str(data.decode('ascii'))
+            bookUid = int(data.decode('ascii'))
 
             s.close()
         except:
             return json.dumps({"code":"0x00"})
         else:
-            if id == session['id']:
+            if bookUid == session['id']:
                 pass
             else:
-                check = op.check_book_userId(id, session['userId'])
+                check = op.check_book_userId(bookUid, session['userId'])
                 if check == "0x0":
                     pass
                 elif check == True:
-                    op.update_book_userId_admin(id)
+                    op.update_book_userId_admin(bookUid)
                 else:
-                    op.connect_userId_with_book(id, session['userId'])
+                    op.connect_userId_with_book(bookUid, session['userId'])
 
     bookData = op.get_book_data_by_userId(session['userId'])
 
