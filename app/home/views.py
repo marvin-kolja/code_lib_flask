@@ -1,16 +1,11 @@
 # app/home/views.py
-# This file is for the Sleepscreen (/) and choose screen (/chooselogin)
+
+# This routing script is for the first screen (sleepscreen?!)
 
 
 from . import home
-from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
-import requests
-from datetime import datetime
-from ..temp import Temp
-import os
-
-temp = Temp()
+from flask import Flask, render_template
 
 @home.route('/', methods = ['GET'])
 def index():
-    return render_template('home/home.html')
+    return render_template('home/index.html')

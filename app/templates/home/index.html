@@ -10,11 +10,19 @@
 
 {% block body %}
 
+<!-- !!! Implement Logo -->
 <h1 class="logo">CODE library</h1>
+
+<!-- !!! Implement Instruction design -->
 <h2 class="touch">Scan your Factory Card</h2>
+
+<!-- displays time -->
 <p class="time" id="time"></p>
+
+<!-- displays scanner status (could be changed in the future -> designwise) -->
 <div id="alert"></div>
 
+<!-- Get current time script -->
 <script>
   $(document).ready(function(){
   function updateTime() {
@@ -28,6 +36,13 @@
   setInterval(updateTime, 1000); // 1000 miliseconds 
   });
 </script>
+
+
+<!-- 
+    Script to get the UID (from scanner) and check it (database) 
+    It's doing get requests to '/getid' and '/checkData' 
+        -> routes can be found in 'app/id_handler/views.py'
+-->
 
 <script>
   const sleep = (milliseconds) => {

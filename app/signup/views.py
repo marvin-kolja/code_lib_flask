@@ -1,5 +1,7 @@
 # app/signup/views.py
 
+# This script is for signup purposes
+
 from . import signup
 from flask import Flask, render_template, redirect, url_for, request, session, jsonify, make_response, g
 import requests
@@ -20,7 +22,7 @@ def signupForm():
     else:
         return render_template('signup/email.html')
 
-@signup.route('/signup/email-send', methods = ['POST', 'GET'])
+@signup.route('/signup/email-send', methods = ['POST'])
 def signupEmailSend():
     # send email
     # For the EXPO MVP Just add a user to the Database
@@ -33,29 +35,31 @@ def signupEmailSend():
 
         session['userFirst'] = first_name
         op = Operations()
+
+        ''' This should be changed, because user will be created at the Library Platform '''
+        # If the user already exist change the UID
         if op.check_user_exist_name(user):
             op.update_id(op.check_user_exist_name(user), session['id'])
             session['userId'] = op.check_user_exist_name(user)
             return redirect(url_for('signup.signupDone'))
+        # If not, create a new user
         else:
-            op.insert_user(user, email)
-            session['userId'] = op.check_user_exist_name(user)
-            return redirect(url_for('signup.signupDone'))
-        
+            return redirect(url_for("signup.signupForm", err="err1", email=email))
 
-        # op = Operations()
-        # if op.check_user_exist_name(user):
-        #     session['userFirst'] = first_name
-        #     session['userLast'] = last_name
-        #     session['userId'] = op.check_user_exist_name(user)
-        #     return redirect(url_for("signup.signupConfirm"))
-        # else:
-        #     return redirect(url_for("signup.signupForm", err="err1", email=email))
+            ''' That's for testing purposes '''
+            # op.insert_user(user, email)
+            # session['userId'] = op.check_user_exist_name(user)
+            # return redirect(url_for('signup.signupDone'))
     else:
         return "Something went wrong"
-    # return redirect(url_for('signupConfirm'))
-    return "Something went wrong"
 
+''' 
+                                        !!! This following part needs to be rewritten !!!
+
+        Singup process is depending on the Library Platform
+        and can't be done yet!
+        However, it should include to check the Database for updates...
+'''
 
 @signup.route('/signup/confirm', methods = ['POST', 'GET'])
 def signupConfirm():
